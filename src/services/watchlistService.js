@@ -10,75 +10,36 @@ export async function addToWatchlist(userId, movie) {
   if (!userId) throw new Error('User ID is required to add to watchlist.');
   if (!movie) throw new Error('Movie object is required.');
 
-  const rawId = movie.id || movie.tmdb_movie_id || movie.tmdbId;
-  const movieId = (!isNaN(Number(rawId)) && rawId !== '') ? Number(rawId) : rawId;
-
-  // 1. Check if already exists in user's watchlist to prevent duplicates
-  const alreadyExists = await checkIfInWatchlist(userId, movieId);
-  if (alreadyExists) {
-    return { status: 'already_saved', movie_id: movieId };
-  }
-
-  // Exact payload matching Supabase watchlist schema
-  const payload = {
-    user_id: userId,
-    tmdb_movie_id: Number(movie.id || movie.tmdb_movie_id || movie.tmdbId || 0),
-    movie_id: Number(movie.id || movie.tmdb_movie_id || movie.tmdbId || 0),
-    title: movie.title || movie.name || 'Untitled',
-    poster_path: movie.poster_path || movie.poster || movie.posterUrl || '',
-    release_date: movie.release_date || movie.releaseDate || '',
-    vote_average: Number(movie.vote_average || movie.rating || 0),
-    movie_data: movie,
-    added_at: new Date().toISOString()
-  };
+  // 1. Extract a valid integer ID
+  const tmdbId = parseInt(String(movie.tmdb_movie_id || movie.id).replace(/\D/g, ''), 10) || Math.abs( Array.from(String(movie.id || movie.title)).reduce((s, c) => Math.imul(31, s) + c.charCodeAt(0) | 0, 0) );
 
   try {
-    const { data, error } = await supabase
+    // 2. First remove any existing duplicate for this user and movie
+    await supabase
       .from('watchlist')
-      .upsert(payload, { onConflict: 'user_id, tmdb_movie_id' });
+      .delete()
+      .eq('user_id', userId)
+      .eq('tmdb_movie_id', tmdbId);
 
-    if (!error) return data;
+    // 3. Then perform a clean .insert() using ONLY the exact columns in public.watchlist
+    const { data, error } = await supabase.from('watchlist').insert({
+      user_id: userId,
+      tmdb_movie_id: tmdbId,
+      title: String(movie.title || movie.name || 'Untitled'),
+      poster_path: String(movie.poster_path || movie.poster || ''),
+      status: 'want_to_watch',
+      release_date: String(movie.release_date || movie.year || ''),
+      vote_average: Number(movie.vote_average || movie.rating || 0),
+      movie_data: movie
+    }).select();
 
-    // Log exact error message so it never fails silently
-    console.warn('[watchlistService] Upsert notice:', error.message, `(Code: ${error.code})`);
-
-    // Handle duplicate error gracefully if caught by DB constraint
-    if (error.code === '23505' || error.message?.includes('duplicate') || error.message?.includes('already exists') || error.message?.includes('unique constraint')) {
-      console.warn('[watchlistService] Movie already exists in user watchlist, caught gracefully.');
-      return { status: 'already_saved', movie_id: movieId };
+    if (error) {
+      console.error('SUPABASE WATCHLIST INSERT ERROR:', error);
+      throw error;
     }
 
-    // If unknown column error (PGRST204 or 42703), retry by omitting non-core columns
-    if (error.code === 'PGRST204' || error.code === '42703' || error.message?.toLowerCase().includes('column') || error.message?.toLowerCase().includes('does not exist')) {
-      console.warn('[watchlistService] Unknown column detected. Retrying with core schema columns. Error:', error.message);
-
-      const corePayload = {
-        user_id: userId,
-        movie_id: movieId,
-        title: payload.title,
-        poster_path: payload.poster_path
-      };
-
-      const { data: coreData, error: coreError } = await supabase
-        .from('watchlist')
-        .insert([corePayload])
-        .select();
-
-      if (!coreError) return coreData;
-
-      if (coreError.code === '23505' || coreError.message?.includes('duplicate') || coreError.message?.includes('already exists')) {
-        return { status: 'already_saved', movie_id: movieId };
-      }
-
-      console.error('[watchlistService] Core fallback insert failed:', coreError.message);
-      throw coreError;
-    }
-
-    throw error;
+    return data;
   } catch (err) {
-    if (err?.code === '23505' || err?.message?.includes('duplicate') || err?.message?.includes('already exists')) {
-      return { status: 'already_saved', movie_id: movieId };
-    }
     console.error('[watchlistService] addToWatchlist error:', err.message || err);
     throw err;
   }
