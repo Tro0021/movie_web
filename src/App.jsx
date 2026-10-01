@@ -96,31 +96,49 @@ export default function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isLoadingWatchlist, setIsLoadingWatchlist] = useState(false);
   
-  // Persistent Watchlist
+  // Persistent Watchlist — guest-only local cache for unauthenticated users.
+  // Authenticated user data is ALWAYS fetched from Supabase on sign-in and stored
+  // under a user-scoped key so two accounts on the same browser never share items.
   const [watchlist, setWatchlist] = useState(() => {
     try {
-      const saved = localStorage.getItem('kinova_watchlist') || localStorage.getItem('cinepulse_watchlist');
-      return saved ? JSON.parse(saved) : [MOCK_MOVIES[0], MOCK_MOVIES[2]];
+      // On cold load we don't know the user yet — load the guest cache only.
+      // If the user is already signed in, syncUserWatchlist() will immediately
+      // overwrite this with their authoritative Supabase data.
+      const saved = localStorage.getItem('kinova_watchlist_guest');
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return [MOCK_MOVIES[0]];
+      return [];
     }
   });
 
   // Persistent Regional Country selection with global RegionContext
   const { currentCountry, setCurrentCountry, setSelectedRegion } = useRegion();
 
-  // Sync user's Supabase cloud watchlist
+  // Sync user's Supabase cloud watchlist — strictly scoped to the given userId.
+  // After a successful cloud fetch:
+  //   • Writes to the user-scoped key (kinova_watchlist_<userId>) only.
+  //   • Clears the guest key so a subsequent different user on the same browser
+  //     never inherits the previous guest's or user's saved items.
   const syncUserWatchlist = useCallback(async (userId) => {
     if (!userId) return;
     setIsLoadingWatchlist(true);
     try {
       const cloudMovies = await getUserWatchlist(userId);
-      if (cloudMovies && cloudMovies.length > 0) {
-        setWatchlist(cloudMovies);
-        localStorage.setItem('kinova_watchlist', JSON.stringify(cloudMovies));
-      }
+      // Always replace in-memory state with the authoritative cloud list
+      // (even if empty — the user may have cleared their cloud watchlist)
+      const authoritative = cloudMovies ?? [];
+      setWatchlist(authoritative);
+      localStorage.setItem(`kinova_watchlist_${userId}`, JSON.stringify(authoritative));
+      // Purge guest key: guest items were either migrated to Supabase on sign-up
+      // or should not persist into this user's session.
+      localStorage.removeItem('kinova_watchlist_guest');
     } catch (err) {
       console.warn('[App] Watchlist sync warning:', err.message);
+      // On error, attempt to restore from this user's local cache (not the guest key)
+      try {
+        const cached = localStorage.getItem(`kinova_watchlist_${userId}`);
+        if (cached) setWatchlist(JSON.parse(cached));
+      } catch {}
     } finally {
       setIsLoadingWatchlist(false);
     }
@@ -166,17 +184,40 @@ export default function App() {
 
       if (event === 'SIGNED_IN' && currentUser) {
         showNotification(`Welcome back, ${currentUser.email}!`, 'success');
+
+        // Migrate any guest-saved movies into the user's Supabase account.
+        // This only runs once after sign-in; after migration the guest key is cleared.
+        const guestRaw = localStorage.getItem('kinova_watchlist_guest');
+        if (guestRaw) {
+          try {
+            const guestItems = JSON.parse(guestRaw);
+            if (Array.isArray(guestItems) && guestItems.length > 0) {
+              // Fire-and-forget parallel upserts; failures are soft-logged only
+              await Promise.allSettled(
+                guestItems.map(m => addToWatchlist(currentUser.id, m))
+              );
+              showNotification(`Saved ${guestItems.length} guest item(s) to your cloud Watchlist.`, 'success');
+            }
+          } catch (e) {
+            console.warn('[App] Guest migration warning:', e.message);
+          }
+        }
+
+        // Fetch the now-merged authoritative cloud list (also purges guest key inside)
         syncUserWatchlist(currentUser.id);
+
         // Ask for tastes if not yet configured
         if (!localStorage.getItem('kinova_user_taste_profile')) {
           setIsTasteModalOpen(true);
         }
       } else if (event === 'SIGNED_OUT') {
         showNotification('Signed out of cloud account.', 'info');
-        try {
-          const saved = localStorage.getItem('kinova_watchlist') || localStorage.getItem('cinepulse_watchlist');
-          if (saved) setWatchlist(JSON.parse(saved));
-        } catch {}
+        // ✅ FIX: Reset to empty immediately — never restore the previous user's
+        // cloud items into the guest slot. The next user on this browser starts fresh.
+        setWatchlist([]);
+        // Also clean up any legacy global keys from before this fix.
+        localStorage.removeItem('kinova_watchlist');
+        localStorage.removeItem('cinepulse_watchlist');
       }
     });
 
@@ -194,10 +235,15 @@ export default function App() {
 
   const [trailerMovie, setTrailerMovie] = useState(null);
 
-  // Sync watchlist to localStorage
+  // Sync watchlist to localStorage — always to a scoped key, never to a shared key.
+  // Authenticated users → kinova_watchlist_<userId>
+  // Guest users        → kinova_watchlist_guest
   useEffect(() => {
-    localStorage.setItem('kinova_watchlist', JSON.stringify(watchlist));
-  }, [watchlist]);
+    const storageKey = user?.id
+      ? `kinova_watchlist_${user.id}`
+      : 'kinova_watchlist_guest';
+    localStorage.setItem(storageKey, JSON.stringify(watchlist));
+  }, [watchlist, user]);
 
   // Sync country + re-fetch the catalog sorted for the new region so "Available
   // in Your Region" updates. selectedMovie is intentionally NOT touched here.
@@ -280,36 +326,41 @@ export default function App() {
     }
   };
 
-  // Add to Watchlist handler with Supabase auth trigger
+  // Watchlist toggle \u2014 works for both guests and authenticated users.
+  // Guests: items saved locally under kinova_watchlist_guest only.
+  // Authenticated: items synced to Supabase + written to user-scoped local cache.
   const handleToggleWatchlist = async (movie) => {
-    if (!user) {
-      setIsAuthModalOpen(true);
-      showNotification('Sign in to sync saved movies to your cloud Watchlist.', 'info');
-      return;
-    }
-
     const movieId = String(movie.tmdbId || movie.id);
     const isAlreadySaved = watchlist.some(
       m => String(m.id) === movieId || String(m.tmdbId) === movieId
     );
 
     if (isAlreadySaved) {
+      // Optimistic UI update
       setWatchlist(prev => prev.filter(m => String(m.id) !== movieId && String(m.tmdbId) !== movieId));
       showNotification(`Removed "${movie.title}" from Watchlist`, 'info');
 
-      try {
-        await removeFromWatchlist(user.id, movieId);
-      } catch (err) {
-        console.error('[Supabase] Remove failed:', err);
+      if (user) {
+        try {
+          await removeFromWatchlist(user.id, movieId);
+        } catch (err) {
+          console.error('[Supabase] Remove failed:', err);
+        }
       }
     } else {
+      // Optimistic UI update
       setWatchlist(prev => [movie, ...prev]);
       showNotification(`Saved "${movie.title}" to Watchlist`, 'success');
 
-      try {
-        await addToWatchlist(user.id, movie);
-      } catch (err) {
-        console.error('[Supabase] Add failed:', err);
+      if (user) {
+        try {
+          await addToWatchlist(user.id, movie);
+        } catch (err) {
+          console.error('[Supabase] Add failed:', err);
+        }
+      } else {
+        // Guest: nudge toward signing in (non-blocking)
+        showNotification('Sign in to sync your Watchlist across devices.', 'info');
       }
     }
   };
