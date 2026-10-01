@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Mail, Lock, User, LogIn, UserPlus, AlertCircle, CheckCircle2, Loader2, Sparkles } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 
@@ -10,8 +10,16 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
+  // Reset input fields and alert states whenever modal opens or user session changes
+  useEffect(() => {
+    setEmail('');
+    setPassword('');
+    setErrorMessage('');
+    setSuccessMessage('');
+  }, [isOpen, user]);
+
   // Close modal on Escape key
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
@@ -19,6 +27,15 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
+
+  // Tab switch handler: clear credentials and alert banners
+  const handleTabSwitch = (signUpState) => {
+    setIsSignUp(signUpState);
+    setEmail('');
+    setPassword('');
+    setErrorMessage('');
+    setSuccessMessage('');
+  };
 
   if (!isOpen) return null;
 
@@ -42,6 +59,8 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
         } else {
           setSuccessMessage('Successfully signed up and logged in!');
           setTimeout(() => {
+            setEmail('');
+            setPassword('');
             onClose();
             if (onAuthSuccess) onAuthSuccess(data.user);
           }, 1200);
@@ -56,6 +75,8 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
 
         setSuccessMessage('Welcome back! You are now logged in.');
         setTimeout(() => {
+          setEmail('');
+          setPassword('');
           onClose();
           if (onAuthSuccess) onAuthSuccess(data.user);
         }, 800);
@@ -72,6 +93,9 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
     setIsLoading(true);
     try {
       await supabase.auth.signOut();
+      setEmail('');
+      setPassword('');
+      setErrorMessage('');
       setSuccessMessage('Signed out successfully.');
       setTimeout(() => {
         onClose();
@@ -143,7 +167,7 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
             <div className="flex rounded-xl bg-slate-900/80 p-1 border border-white/5">
               <button
                 type="button"
-                onClick={() => { setIsSignUp(false); setErrorMessage(''); setSuccessMessage(''); }}
+                onClick={() => handleTabSwitch(false)}
                 className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                   !isSignUp ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                 }`}
@@ -153,7 +177,7 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
               </button>
               <button
                 type="button"
-                onClick={() => { setIsSignUp(true); setErrorMessage(''); setSuccessMessage(''); }}
+                onClick={() => handleTabSwitch(true)}
                 className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                   isSignUp ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                 }`}
@@ -178,7 +202,7 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} autoComplete="off" className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
                   <Mail className="w-3.5 h-3.5 text-slate-400" />
@@ -187,6 +211,7 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
                 <input
                   type="email"
                   required
+                  autoComplete="off"
                   placeholder="cinephile@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -203,6 +228,7 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
                   type="password"
                   required
                   minLength={6}
+                  autoComplete="new-password"
                   placeholder="Minimum 6 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -231,9 +257,9 @@ export default function AuthModal({ isOpen, onClose, user, onAuthSuccess }) {
 
             <div className="text-center text-[11px] text-slate-500">
               {isSignUp ? (
-                <span>Already have an account? <button onClick={() => setIsSignUp(false)} className="text-amber-400 hover:underline cursor-pointer">Log in</button></span>
+                <span>Already have an account? <button type="button" onClick={() => handleTabSwitch(false)} className="text-amber-400 hover:underline cursor-pointer">Log in</button></span>
               ) : (
-                <span>New to Kinova? <button onClick={() => setIsSignUp(true)} className="text-amber-400 hover:underline cursor-pointer">Create an account</button></span>
+                <span>New to Kinova? <button type="button" onClick={() => handleTabSwitch(true)} className="text-amber-400 hover:underline cursor-pointer">Create an account</button></span>
               )}
             </div>
           </>
