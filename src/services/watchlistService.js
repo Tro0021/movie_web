@@ -52,29 +52,19 @@ export async function removeFromWatchlist(userId, tmdbMovieId) {
   if (!userId) throw new Error('User ID is required to remove from watchlist.');
   if (!tmdbMovieId) throw new Error('Movie ID is required.');
 
-  const rawId = tmdbMovieId;
-  const numId = !isNaN(Number(rawId)) ? Number(rawId) : rawId;
-  const strId = String(rawId);
+  const tmdbId = parseInt(String(tmdbMovieId).replace(/\D/g, ''), 10) || tmdbMovieId;
 
   try {
-    let { data, error } = await supabase
+    const { data, error } = await supabase
       .from('watchlist')
       .delete()
       .eq('user_id', userId)
-      .eq('movie_id', numId);
+      .eq('tmdb_movie_id', tmdbId);
 
-    // If type mismatch occurred, retry with string ID
-    if (error && (error.code === '22P02' || error.message?.includes('invalid input syntax'))) {
-      const retry = await supabase
-        .from('watchlist')
-        .delete()
-        .eq('user_id', userId)
-        .eq('movie_id', strId);
-      if (retry.error) throw retry.error;
-      return retry.data;
+    if (error) {
+      console.error('SUPABASE WATCHLIST DELETE ERROR:', error);
+      throw error;
     }
-
-    if (error) throw error;
     return data;
   } catch (err) {
     console.error('[watchlistService] removeFromWatchlist error:', err.message || err);
@@ -115,7 +105,7 @@ export async function getUserWatchlist(userId) {
     }
 
     if (result.error) {
-      console.error('[watchlistService] getUserWatchlist query error:', result.error.message);
+      console.error('SUPABASE WATCHLIST SELECT ERROR:', result.error);
       throw result.error;
     }
 
@@ -130,6 +120,8 @@ export async function getUserWatchlist(userId) {
         posterUrl = 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=500&q=80';
       }
 
+      const movieId = row.tmdb_movie_id ?? row.movie_id;
+
       // If full movie_data was stored in JSONB, merge and hydrate
       if (row.movie_data && typeof row.movie_data === 'object') {
         const mData = row.movie_data;
@@ -139,14 +131,16 @@ export async function getUserWatchlist(userId) {
         }
         return {
           ...mData,
-          id: row.movie_id ?? mData.id,
-          tmdbId: Number(row.movie_id ?? mData.tmdbId ?? mData.id) || row.movie_id,
+          id: movieId ?? mData.id,
+          tmdbId: Number(movieId ?? mData.tmdbId ?? mData.id),
+          tmdb_movie_id: Number(movieId ?? mData.tmdb_movie_id ?? mData.id),
           title: row.title || mData.title || mData.name || 'Untitled Film',
           posterUrl: mPosterUrl || posterUrl,
           poster_path: row.poster_path || mData.poster_path || '',
           releaseDate: row.release_date || mData.releaseDate || mData.release_date || '',
           release_date: row.release_date || mData.release_date || mData.releaseDate || '',
           vote_average: Number(row.vote_average ?? mData.vote_average ?? 0),
+          status: row.status || 'want_to_watch',
           watchlistRowId: row.id
         };
       }
@@ -154,8 +148,9 @@ export async function getUserWatchlist(userId) {
       // Otherwise build fallback movie structure matching Watchlist UI expectations
       const voteAvg = Number(row.vote_average) || null;
       return {
-        id: row.movie_id,
-        tmdbId: Number(row.movie_id) || row.movie_id,
+        id: movieId,
+        tmdbId: Number(movieId),
+        tmdb_movie_id: Number(movieId),
         title: row.title || 'Untitled Film',
         posterUrl,
         poster_path: row.poster_path || '',
@@ -168,11 +163,12 @@ export async function getUserWatchlist(userId) {
           tmdb: { score: voteAvg ? voteAvg.toFixed(1) : null }
         },
         vote_average: voteAvg || 0,
+        status: row.status || 'want_to_watch',
         watchlistRowId: row.id
       };
     });
   } catch (err) {
-    console.error('[watchlistService] getUserWatchlist error:', err.message || err);
+    console.error('SUPABASE WATCHLIST GET ERROR:', err);
     return [];
   }
 }
@@ -183,30 +179,18 @@ export async function getUserWatchlist(userId) {
 export async function checkIfInWatchlist(userId, tmdbMovieId) {
   if (!userId || !tmdbMovieId) return false;
 
-  const rawId = tmdbMovieId;
-  const numId = !isNaN(Number(rawId)) ? Number(rawId) : rawId;
-  const strId = String(rawId);
+  const tmdbId = parseInt(String(tmdbMovieId).replace(/\D/g, ''), 10) || tmdbMovieId;
 
   try {
-    let { data, error } = await supabase
+    const { data, error } = await supabase
       .from('watchlist')
       .select('id')
       .eq('user_id', userId)
-      .eq('movie_id', numId)
+      .eq('tmdb_movie_id', tmdbId)
       .maybeSingle();
 
-    if (error && (error.code === '22P02' || error.message?.includes('invalid input syntax'))) {
-      const retry = await supabase
-        .from('watchlist')
-        .select('id')
-        .eq('user_id', userId)
-        .eq('movie_id', strId)
-        .maybeSingle();
-      if (!retry.error) return Boolean(retry.data);
-    }
-
     if (error) {
-      console.warn('[watchlistService] checkIfInWatchlist warning:', error.message);
+      console.error('SUPABASE WATCHLIST CHECK ERROR:', error);
       return false;
     }
 

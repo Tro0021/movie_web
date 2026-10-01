@@ -124,17 +124,40 @@ export default function App() {
     setIsLoadingWatchlist(true);
     try {
       const cloudMovies = await getUserWatchlist(userId);
-      // Always replace in-memory state with the authoritative cloud list
-      // (even if empty — the user may have cleared their cloud watchlist)
-      const authoritative = cloudMovies ?? [];
-      setWatchlist(authoritative);
-      localStorage.setItem(`kinova_watchlist_${userId}`, JSON.stringify(authoritative));
-      // Purge guest key: guest items were either migrated to Supabase on sign-up
-      // or should not persist into this user's session.
+      const cloudList = cloudMovies ?? [];
+
+      // Automatically reconcile: push any movies in local watchlist that are missing from Supabase
+      let mergedList = [...cloudList];
+      try {
+        const cachedRaw = localStorage.getItem(`kinova_watchlist_${userId}`);
+        if (cachedRaw) {
+          const cachedItems = JSON.parse(cachedRaw);
+          if (Array.isArray(cachedItems) && cachedItems.length > 0) {
+            const cloudIds = new Set(
+              cloudList.map(m => String(m.tmdb_movie_id || m.tmdbId || m.id))
+            );
+            const missingFromCloud = cachedItems.filter(
+              m => !cloudIds.has(String(m.tmdb_movie_id || m.tmdbId || m.id))
+            );
+
+            if (missingFromCloud.length > 0) {
+              console.log(`[App] Auto-syncing ${missingFromCloud.length} local items to Supabase public.watchlist...`);
+              await Promise.allSettled(
+                missingFromCloud.map(m => addToWatchlist(userId, m))
+              );
+              mergedList = [...cloudList, ...missingFromCloud];
+            }
+          }
+        }
+      } catch (cacheErr) {
+        console.warn('[App] Local cache reconciliation notice:', cacheErr);
+      }
+
+      setWatchlist(mergedList);
+      localStorage.setItem(`kinova_watchlist_${userId}`, JSON.stringify(mergedList));
       localStorage.removeItem('kinova_watchlist_guest');
     } catch (err) {
-      console.warn('[App] Watchlist sync warning:', err.message);
-      // On error, attempt to restore from this user's local cache (not the guest key)
+      console.error('[App] Watchlist sync error:', err.message || err);
       try {
         const cached = localStorage.getItem(`kinova_watchlist_${userId}`);
         if (cached) setWatchlist(JSON.parse(cached));

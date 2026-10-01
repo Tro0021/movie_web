@@ -141,13 +141,13 @@ export async function scrapeBoxOfficeMojo(imdbId) {
   const releasesUrl = `https://www.boxofficemojo.com/title/${cleanId}/releases/`;
 
   try {
-    // Parallel fetch of main summary and releases page
+    // Parallel fetch of main summary and releases page with safe 3.5s timeout
     const [mainRes, releasesRes] = await Promise.all([
-      axios.get(mainUrl, { headers: SCRAPER_HEADERS, timeout: 12000 }).catch(err => {
+      axios.get(mainUrl, { headers: SCRAPER_HEADERS, timeout: 3500 }).catch(err => {
         console.warn(`[BOM Scraper] Main page fetch warning for ${cleanId}: ${err.message}`);
         return null;
       }),
-      axios.get(releasesUrl, { headers: SCRAPER_HEADERS, timeout: 12000 }).catch(err => {
+      axios.get(releasesUrl, { headers: SCRAPER_HEADERS, timeout: 3500 }).catch(err => {
         console.warn(`[BOM Scraper] Releases page fetch warning for ${cleanId}: ${err.message}`);
         return null;
       })
