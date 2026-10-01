@@ -92,12 +92,25 @@ export default function MovieCard({
             <span className="font-bold text-white">{movie.ratings?.imdb?.score || 'N/A'}</span>
           </div>
 
-          {(movie.financials?.worldwideGrossRaw || movie.financials?.worldwideGross > 0) && (
+          {Boolean(
+            movie.financials?.worldwideGross ||
+            movie.financials?.worldwideGrossRaw ||
+            movie.financials?.grossInrCrores ||
+            movie.worldwideGross ||
+            movie.revenue ||
+            movie.grossInrCrores
+          ) && (
             <div className="text-[11px] font-semibold text-emerald-300 bg-black/70 backdrop-blur-md px-2 py-1 rounded-lg border border-emerald-500/20">
               {formatCurrency(
-                movie.financials.worldwideGrossRaw ?? movie.financials.worldwideGross, 
+                movie.financials?.worldwideGross ||
+                movie.worldwideGross ||
+                movie.revenue ||
+                movie.financials?.worldwideGrossRaw, 
                 selectedRegion, 
-                { nativeInrCrores: movie.financials.grossInrCrores, compact: true }
+                { 
+                  nativeInrCrores: movie.financials?.grossInrCrores ?? movie.grossInrCrores, 
+                  compact: true 
+                }
               )}
             </div>
           )}

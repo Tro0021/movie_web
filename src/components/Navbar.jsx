@@ -82,12 +82,9 @@ export default function Navbar({
               <Film className="w-5 h-5 text-black fill-black" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center">
                 <span className="font-heading font-extrabold text-xl sm:text-2xl tracking-wider text-white">
                   KINOVA
-                </span>
-                <span className="text-[9px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-amber-400/10 text-amber-300 border border-amber-400/25">
-                  JOURNAL
                 </span>
               </div>
               <p className="text-[10px] text-slate-400 font-medium hidden sm:block tracking-wide">Cinema Archive & Box Office Intelligence</p>
@@ -201,13 +198,12 @@ export default function Navbar({
             <div className="relative" ref={regionMenuRef}>
               <button
                 onClick={() => setIsRegionMenuOpen(prev => !prev)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#121622] hover:bg-[#181f30] border border-white/10 text-xs font-semibold text-slate-200 transition-all cursor-pointer shadow-sm"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#121622] hover:bg-[#181f30] border border-white/10 hover:border-amber-400/40 text-xs font-semibold text-slate-200 transition-all cursor-pointer shadow-sm"
                 title={`Active region & currency: ${activeCountryObj.name}. Click to switch.`}
               >
-                <span className="text-sm">{activeCountryObj.flag}</span>
-                <span className="text-[11px] font-bold text-amber-300">{activeCountryObj.code}</span>
-                <span className="text-[10px] text-slate-400 font-mono">
-                  ({(EXCHANGE_RATES[activeCountryObj.code] || EXCHANGE_RATES.US).symbol})
+                <Globe className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                <span className="text-[11px] font-bold text-amber-300">
+                  {activeCountryObj.code} ({(EXCHANGE_RATES[activeCountryObj.code] || EXCHANGE_RATES.US).symbol})
                 </span>
               </button>
 
@@ -239,7 +235,9 @@ export default function Navbar({
                           }`}
                         >
                           <span className="flex items-center gap-2 truncate">
-                            <span>{c.flag}</span>
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-white/10 text-amber-300 border border-white/10">
+                              {c.code}
+                            </span>
                             <span className="truncate">{c.name}</span>
                           </span>
                           <span className="text-[11px] font-mono font-bold text-slate-300 flex-shrink-0 ml-2">

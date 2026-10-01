@@ -36,7 +36,7 @@ export default function RightSidebar({
           <div className="flex items-center gap-1.5 py-4 px-2 rounded-l-2xl bg-[#121622]/90 hover:bg-[#181f30] backdrop-blur-md border-l border-y border-amber-400/30 text-amber-300 shadow-2xl transition-all duration-300 group-hover:-translate-x-1">
             <ChevronLeft className="w-4 h-4 text-amber-400 animate-pulse" />
             <div className="flex flex-col items-center gap-2">
-              <span className="text-[12px]">{activeCountryObj.flag}</span>
+              <Globe className="w-3.5 h-3.5 text-amber-400" />
               <span 
                 className="text-[10px] font-bold uppercase tracking-widest text-slate-300 group-hover:text-amber-300 transition-colors"
                 style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
@@ -172,8 +172,8 @@ export default function RightSidebar({
                 <Globe className="w-3.5 h-3.5 text-amber-400" />
                 Regional Territory
               </span>
-              <span className="text-[11px] font-bold text-amber-300 flex items-center gap-1">
-                {activeCountryObj.flag} {activeCountryObj.name}
+              <span className="text-[11px] font-bold text-amber-300 flex items-center gap-1.5">
+                {activeCountryObj.name} ({activeCountryObj.code})
               </span>
             </div>
 
@@ -189,8 +189,10 @@ export default function RightSidebar({
                   }`}
                 >
                   <span className="flex items-center gap-1.5 truncate">
-                    <span>{c.flag}</span>
-                    <span className="truncate">{c.code}</span>
+                    <span className="px-1 py-0.5 rounded text-[10px] font-mono font-bold bg-white/10 text-amber-300">
+                      {c.code}
+                    </span>
+                    <span className="truncate text-xs">{c.name}</span>
                   </span>
                   {currentCountry === c.code && <Check className="w-3 h-3 text-amber-400 flex-shrink-0" />}
                 </button>

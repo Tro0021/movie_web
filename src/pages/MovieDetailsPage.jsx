@@ -254,7 +254,7 @@ export default function MovieDetailsPage({
                   {isUpcoming
                     ? <span className="text-sky-400">Unreleased</span>
                     : formatRegionCurrency(
-                        movie.financials?.worldwideGrossRaw ?? movie.financials?.worldwideGross, 
+                        movie.financials?.worldwideGross || movie.financials?.worldwideGrossRaw, 
                         activeRegion, 
                         { nativeInrCrores: movie.financials?.grossInrCrores, compact: true }
                       )
@@ -265,7 +265,7 @@ export default function MovieDetailsPage({
                 <span className="text-[11px] text-slate-400 block font-medium">Budget</span>
                 <span className="text-sm font-bold text-slate-200 font-heading">
                   {formatRegionCurrency(
-                    movie.financials?.budgetRaw ?? movie.financials?.budget, 
+                    movie.financials?.budget || movie.financials?.budgetRaw, 
                     activeRegion, 
                     { nativeInrCrores: movie.financials?.budgetInrCrores, compact: true }
                   )}

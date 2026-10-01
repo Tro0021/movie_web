@@ -926,13 +926,13 @@ export const MOCK_MOVIES = [
 ];
 
 export const COUNTRY_OPTIONS = [
-  { code: 'IN', name: 'India', flag: '🇮🇳', currency: 'INR', ottLeading: 'JioCinema, Netflix, Prime' },
-  { code: 'US', name: 'United States', flag: '🇺🇸', currency: 'USD', ottLeading: 'Max, Peacock, Hulu' },
-  { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', currency: 'GBP', ottLeading: 'Sky Cinema, NOW, Channel 4' },
-  { code: 'CA', name: 'Canada', flag: '🇨🇦', currency: 'CAD', ottLeading: 'Crave, Prime, Netflix' },
-  { code: 'AU', name: 'Australia', flag: '🇦🇺', currency: 'AUD', ottLeading: 'Stan, Binge, Foxtel' },
-  { code: 'DE', name: 'Germany', flag: '🇩🇪', currency: 'EUR', ottLeading: 'WOW, Sky Deutschland' },
-  { code: 'FR', name: 'France', flag: '🇫🇷', currency: 'EUR', ottLeading: 'Canal+, Netflix, Curzon' },
-  { code: 'JP', name: 'Japan', flag: '🇯🇵', currency: 'JPY', ottLeading: 'U-NEXT, Netflix' },
-  { code: 'ALL', name: 'Global Theatrical', flag: '🌐', currency: 'USD', ottLeading: 'All Territories' }
+  { code: 'IN', name: 'India', flag: '', currency: 'INR', ottLeading: 'JioCinema, Netflix, Prime' },
+  { code: 'US', name: 'United States', flag: '', currency: 'USD', ottLeading: 'Max, Peacock, Hulu' },
+  { code: 'GB', name: 'United Kingdom', flag: '', currency: 'GBP', ottLeading: 'Sky Cinema, NOW, Channel 4' },
+  { code: 'CA', name: 'Canada', flag: '', currency: 'CAD', ottLeading: 'Crave, Prime, Netflix' },
+  { code: 'AU', name: 'Australia', flag: '', currency: 'AUD', ottLeading: 'Stan, Binge, Foxtel' },
+  { code: 'DE', name: 'Germany', flag: '', currency: 'EUR', ottLeading: 'WOW, Sky Deutschland' },
+  { code: 'FR', name: 'France', flag: '', currency: 'EUR', ottLeading: 'Canal+, Netflix, Curzon' },
+  { code: 'JP', name: 'Japan', flag: '', currency: 'JPY', ottLeading: 'U-NEXT, Netflix' },
+  { code: 'ALL', name: 'Global Theatrical', flag: '', currency: 'USD', ottLeading: 'All Territories' }
 ];

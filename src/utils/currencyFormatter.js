@@ -5,7 +5,9 @@
  * into regional currencies using official territorial box office conventions:
  * 
  * - India ('IN'): Indian Box Office System (Crores '₹X Cr' for >= 10M INR, Lakhs '₹X Lakh' for >= 100K INR)
- * - United States ('US'): USD ($M / $B)
+ *   - For >= ₹100 Cr: rounded to clean whole number with Indian comma grouping (e.g., ₹6,001 Cr)
+ *   - For < ₹100 Cr: up to 1 decimal place with Indian comma grouping (e.g., ₹45.5 Cr)
+ * - United States ('US'): USD ($M / $B, e.g. $714.4M, $1.2B)
  * - United Kingdom ('GB'): GBP (£M / £B)
  * - European Union ('DE', 'FR', 'ES', 'IT', 'EU', 'NL', 'IE'): EUR (€M / €B)
  * - Japan ('JP'): JPY (¥M / ¥B)
@@ -42,6 +44,7 @@ const CURRENCY_TO_REGION_MAP = {
 
 /**
  * Robust numeric parser for amounts (handles raw numbers, strings, or strings with unit multipliers)
+ * Comma-safe: properly handles strings with commas like "$1,200M" or "₹6,001 Cr".
  */
 export function parseRawNumericAmount(amount) {
   if (amount === undefined || amount === null || amount === '') return null;
@@ -60,24 +63,39 @@ export function parseRawNumericAmount(amount) {
     return null;
   }
 
-  // Handle strings like "$43.5M", "£30.7M", "$1.2B"
-  const multiplierMatch = str.match(/([0-9.]+)\s*([BMK])\b/i);
+  // Handle strings like "₹365 Cr" or "₹6,001 Cr" or "6,001.3 crore"
+  const croreMatch = str.match(/([0-9.,]+)\s*(?:Cr|Crore)/i);
+  if (croreMatch) {
+    const val = parseFloat(croreMatch[1].replace(/,/g, ''));
+    return isNaN(val) || val <= 0 ? null : Math.round((val * 10000000) / 84);
+  }
+
+  // Handle strings with Lakh/Lakhs
+  const lakhMatch = str.match(/([0-9.,]+)\s*(?:Lakh|Lakhs)/i);
+  if (lakhMatch) {
+    const val = parseFloat(lakhMatch[1].replace(/,/g, ''));
+    return isNaN(val) || val <= 0 ? null : Math.round((val * 100000) / 84);
+  }
+
+  // Handle strings with multipliers like "$43.5M", "£30.7M", "$1.2B", "$714.4M"
+  const multiplierMatch = str.match(/([0-9.,]+)\s*([BMK])\b/i);
   if (multiplierMatch) {
-    const val = parseFloat(multiplierMatch[1]);
+    const val = parseFloat(multiplierMatch[1].replace(/,/g, ''));
+    if (isNaN(val) || val <= 0) return null;
     const unit = multiplierMatch[2].toUpperCase();
     if (unit === 'B') return Math.round(val * 1e9);
     if (unit === 'M') return Math.round(val * 1e6);
     if (unit === 'K') return Math.round(val * 1e3);
   }
 
-  // Handle strings like "₹365 Cr" or "365 crore"
-  const croreMatch = str.match(/([0-9.]+)\s*(?:Cr|Crore)/i);
-  if (croreMatch) {
-    const val = parseFloat(croreMatch[1]);
-    return Math.round((val * 10000000) / 84);
+  // Handle raw strings containing ₹ or INR (in native rupees)
+  if (str.includes('₹') || /\bINR\b/i.test(str)) {
+    const cleaned = str.replace(/,/g, '').replace(/[^0-9.]/g, '');
+    const num = parseFloat(cleaned);
+    return isNaN(num) || num <= 0 ? null : Math.round(num / 84);
   }
 
-  const cleaned = str.replace(/[^0-9.]/g, '');
+  const cleaned = str.replace(/,/g, '').replace(/[^0-9.]/g, '');
   const parsed = parseFloat(cleaned);
   return isNaN(parsed) || parsed <= 0 ? null : parsed;
 }
@@ -85,7 +103,7 @@ export function parseRawNumericAmount(amount) {
 /**
  * Format dynamic regional currency with Indian Box Office system (Crores/Lakhs) and international abbreviations.
  * 
- * @param {number|string} amount Base amount in USD (or raw number)
+ * @param {number|string} amount Base amount in USD (or raw number / string)
  * @param {string} regionCode Territorial region ('IN', 'US', 'GB', 'DE', etc.) or currency code ('USD', 'INR')
  * @param {object|boolean} [options={}] Formatting options or boolean for compact
  * @returns {string} Formatted currency string or 'Not Reported'
@@ -102,15 +120,26 @@ export function formatRegionCurrency(amount, regionCode = 'IN', options = {}) {
     cleanRegion = CURRENCY_TO_REGION_MAP[cleanRegion];
   }
 
-  // 1. If native pre-scraped INR Crore value exists and region is India, preserve exact Crore figure without rounding loss
-  if (cleanRegion === 'IN' && nativeInrCrores !== undefined && nativeInrCrores !== null && Number(nativeInrCrores) > 0) {
+  // 1. If native pre-scraped INR Crore value exists
+  if (nativeInrCrores !== undefined && nativeInrCrores !== null && Number(nativeInrCrores) > 0) {
     const numCrores = Number(nativeInrCrores);
-    const formatted = Number(numCrores.toFixed(1)).toString();
-    return `₹${formatted} Cr`;
+    if (cleanRegion === 'IN') {
+      if (numCrores >= 100) {
+        return `₹${Math.round(numCrores).toLocaleString('en-IN')} Cr`;
+      }
+      const formatted = Number(numCrores.toFixed(1)).toLocaleString('en-IN');
+      return `₹${formatted} Cr`;
+    }
   }
 
   // 2. Parse numeric USD base amount
-  const numericUSD = parseRawNumericAmount(amount);
+  let numericUSD = parseRawNumericAmount(amount);
+
+  // If amount was not provided or 0, but nativeInrCrores is available, derive base USD:
+  if ((numericUSD === null || numericUSD <= 0) && nativeInrCrores && Number(nativeInrCrores) > 0) {
+    numericUSD = Math.round((Number(nativeInrCrores) * 10000000) / 84);
+  }
+
   if (numericUSD === null || numericUSD <= 0) {
     return fallback;
   }
@@ -122,15 +151,17 @@ export function formatRegionCurrency(amount, regionCode = 'IN', options = {}) {
     // Values >= 1 Crore (10,000,000 INR)
     if (inrValue >= 10000000) {
       const crores = inrValue / 10000000;
-      // Round to 1 decimal place, stripping trailing zero if whole
-      const formatted = Number(crores.toFixed(1)).toString();
+      if (crores >= 100) {
+        return `₹${Math.round(crores).toLocaleString('en-IN')} Cr`;
+      }
+      const formatted = Number(crores.toFixed(1)).toLocaleString('en-IN');
       return `₹${formatted} Cr`;
     }
 
     // Values >= 1 Lakh (100,000 INR) and < 1 Crore
     if (inrValue >= 100000) {
       const lakhs = inrValue / 100000;
-      const formatted = Number(lakhs.toFixed(1)).toString();
+      const formatted = Number(lakhs.toFixed(1)).toLocaleString('en-IN');
       return `₹${formatted} Lakh`;
     }
 
@@ -148,13 +179,16 @@ export function formatRegionCurrency(amount, regionCode = 'IN', options = {}) {
 
   if (isCompact) {
     if (converted >= 1e9) {
-      return `${regionConfig.symbol}${Number((converted / 1e9).toFixed(2))}B`;
+      const bVal = Number((converted / 1e9).toFixed(1));
+      return `${regionConfig.symbol}${bVal}B`;
     }
     if (converted >= 1e6) {
-      return `${regionConfig.symbol}${Number((converted / 1e6).toFixed(1))}M`;
+      const mVal = Number((converted / 1e6).toFixed(1));
+      return `${regionConfig.symbol}${mVal}M`;
     }
     if (converted >= 1e3) {
-      return `${regionConfig.symbol}${Number((converted / 1e3).toFixed(0))}K`;
+      const kVal = Number((converted / 1e3).toFixed(0));
+      return `${regionConfig.symbol}${kVal}K`;
     }
   }
 

@@ -184,14 +184,13 @@ export default function StreamingTicketing({
             <button
               key={c.code}
               onClick={() => onCountryChange(c.code)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 flex-shrink-0 ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center justify-center flex-shrink-0 ${
                 currentCountry === c.code
                   ? 'bg-rose-600 text-white shadow-glow-crimson'
                   : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
               }`}
             >
-              <span>{c.flag}</span>
-              <span>{c.code}</span>
+              <span className="font-mono tracking-wider">{c.code}</span>
             </button>
           ))}
         </div>

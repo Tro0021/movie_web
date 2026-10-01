@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Play, Sparkles, Film, Star, Info, ArrowRight, Bookmark, 
-  RotateCw, SlidersHorizontal 
+  RotateCw, SlidersHorizontal, Globe 
 } from 'lucide-react';
 import MovieCard from '../components/MovieCard';
 import { formatCurrency } from '../services/financialUtils';
@@ -123,7 +123,7 @@ export default function HomePage({
                 <span className="text-[10px] text-slate-400 uppercase font-semibold block">Worldwide Box Office</span>
                 <span className="text-lg sm:text-xl font-extrabold text-emerald-400 font-heading">
                   {formatCurrency(
-                    heroMovie.financials?.worldwideGrossRaw ?? heroMovie.financials?.worldwideGross, 
+                    heroMovie.financials?.worldwideGross || heroMovie.financials?.worldwideGrossRaw, 
                     currentCountry, 
                     { nativeInrCrores: heroMovie.financials?.grossInrCrores }
                   )}
@@ -292,7 +292,7 @@ export default function HomePage({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xl">{activeCountryObj.flag}</span>
+              <Globe className="w-5 h-5 text-amber-400" />
               <h2 className="text-2xl font-bold text-white font-heading flex items-center gap-2">
                 {currentCountry === 'ALL'
                   ? 'Global Cinema Vault'
@@ -317,7 +317,7 @@ export default function HomePage({
             >
               {COUNTRY_OPTIONS.map(c => (
                 <option key={c.code} value={c.code}>
-                  {c.flag} {c.name} ({c.code})
+                  {c.name} ({c.code})
                 </option>
               ))}
             </select>

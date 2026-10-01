@@ -13,7 +13,7 @@ export default function Footer({ onNavigateToAi }) {
           </div>
           <span className="font-bold text-slate-300 tracking-wide text-xs">KINOVA</span>
           <span className="text-slate-600">·</span>
-          <span className="text-slate-500">The Cinema &amp; Box Office Journal</span>
+          <span className="text-slate-500">Cinema Archive &amp; Box Office Intelligence</span>
         </div>
 
         {/* API Attribution */}

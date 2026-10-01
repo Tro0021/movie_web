@@ -132,7 +132,7 @@ export default function BoxOfficeLeaderboardPage({ movies, onSelectMovie }) {
 
                     <td className="py-4 px-4 font-mono font-bold text-emerald-400 text-sm">
                       {formatCurrency(
-                        movie.financials?.worldwideGrossRaw ?? movie.financials?.worldwideGross, 
+                        movie.financials?.worldwideGross || movie.financials?.worldwideGrossRaw, 
                         selectedRegion, 
                         { nativeInrCrores: movie.financials?.grossInrCrores }
                       )}
@@ -140,7 +140,7 @@ export default function BoxOfficeLeaderboardPage({ movies, onSelectMovie }) {
 
                     <td className="py-4 px-4 font-mono text-slate-300">
                       {formatCurrency(
-                        movie.financials?.budgetRaw ?? movie.financials?.budget, 
+                        movie.financials?.budget || movie.financials?.budgetRaw, 
                         selectedRegion, 
                         { nativeInrCrores: movie.financials?.budgetInrCrores }
                       )}
@@ -148,7 +148,7 @@ export default function BoxOfficeLeaderboardPage({ movies, onSelectMovie }) {
 
                     <td className="py-4 px-4 font-mono text-slate-300">
                       {formatCurrency(
-                        movie.financials?.domesticNetRaw ?? movie.financials?.domesticNet, 
+                        movie.financials?.domesticNet || movie.financials?.domesticNetRaw, 
                         selectedRegion
                       )}
                     </td>
