@@ -335,9 +335,13 @@ export default function App() {
       m => String(m.id) === movieId || String(m.tmdbId) === movieId
     );
 
+    const cacheKey = user?.id ? `kinova_watchlist_${user.id}` : 'kinova_watchlist_guest';
+
     if (isAlreadySaved) {
-      // Optimistic UI update
-      setWatchlist(prev => prev.filter(m => String(m.id) !== movieId && String(m.tmdbId) !== movieId));
+      // Optimistic UI update + Immediate scoped cache persistence
+      const updatedList = watchlist.filter(m => String(m.id) !== movieId && String(m.tmdbId) !== movieId);
+      setWatchlist(updatedList);
+      localStorage.setItem(cacheKey, JSON.stringify(updatedList));
       showNotification(`Removed "${movie.title}" from Watchlist`, 'info');
 
       if (user) {
@@ -348,8 +352,10 @@ export default function App() {
         }
       }
     } else {
-      // Optimistic UI update
-      setWatchlist(prev => [movie, ...prev]);
+      // Optimistic UI update + Immediate scoped cache persistence
+      const updatedList = [movie, ...watchlist.filter(m => String(m.id) !== movieId && String(m.tmdbId) !== movieId)];
+      setWatchlist(updatedList);
+      localStorage.setItem(cacheKey, JSON.stringify(updatedList));
       showNotification(`Saved "${movie.title}" to Watchlist`, 'success');
 
       if (user) {
