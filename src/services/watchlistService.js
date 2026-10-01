@@ -10,7 +10,7 @@ export async function addToWatchlist(userId, movie) {
   if (!userId) throw new Error('User ID is required to add to watchlist.');
   if (!movie) throw new Error('Movie object is required.');
 
-  const rawId = movie.id || movie.tmdbId;
+  const rawId = movie.id || movie.tmdb_movie_id || movie.tmdbId;
   const movieId = (!isNaN(Number(rawId)) && rawId !== '') ? Number(rawId) : rawId;
 
   // 1. Check if already exists in user's watchlist to prevent duplicates
@@ -19,32 +19,28 @@ export async function addToWatchlist(userId, movie) {
     return { status: 'already_saved', movie_id: movieId };
   }
 
-  const posterPath = movie.poster_path || movie.poster || movie.posterUrl || '';
-  const title = movie.title || movie.name || 'Untitled';
-  const releaseDate = movie.release_date || movie.releaseDate || (movie.year ? String(movie.year) : '');
-  const voteAverage = Number(movie.vote_average || movie.rating || movie.ratings?.tmdb?.score || movie.ratings?.imdb?.score || 0);
-
-  // Full clean row payload matching Supabase watchlist schema
-  const fullPayload = {
+  // Exact payload matching Supabase watchlist schema
+  const payload = {
     user_id: userId,
-    movie_id: movieId,
-    title: title,
-    poster_path: posterPath,
-    release_date: releaseDate,
-    vote_average: voteAverage,
-    movie_data: movie
+    tmdb_movie_id: Number(movie.id || movie.tmdb_movie_id || movie.tmdbId || 0),
+    movie_id: Number(movie.id || movie.tmdb_movie_id || movie.tmdbId || 0),
+    title: movie.title || movie.name || 'Untitled',
+    poster_path: movie.poster_path || movie.poster || movie.posterUrl || '',
+    release_date: movie.release_date || movie.releaseDate || '',
+    vote_average: Number(movie.vote_average || movie.rating || 0),
+    movie_data: movie,
+    added_at: new Date().toISOString()
   };
 
   try {
     const { data, error } = await supabase
       .from('watchlist')
-      .insert([fullPayload])
-      .select();
+      .upsert(payload, { onConflict: 'user_id, tmdb_movie_id' });
 
     if (!error) return data;
 
     // Log exact error message so it never fails silently
-    console.warn('[watchlistService] Full insert notice:', error.message, `(Code: ${error.code})`);
+    console.warn('[watchlistService] Upsert notice:', error.message, `(Code: ${error.code})`);
 
     // Handle duplicate error gracefully if caught by DB constraint
     if (error.code === '23505' || error.message?.includes('duplicate') || error.message?.includes('already exists') || error.message?.includes('unique constraint')) {
@@ -52,15 +48,15 @@ export async function addToWatchlist(userId, movie) {
       return { status: 'already_saved', movie_id: movieId };
     }
 
-    // If unknown column error (PGRST204 or 42703 or message mentions column), fallback to core columns
+    // If unknown column error (PGRST204 or 42703), retry by omitting non-core columns
     if (error.code === 'PGRST204' || error.code === '42703' || error.message?.toLowerCase().includes('column') || error.message?.toLowerCase().includes('does not exist')) {
-      console.warn('[watchlistService] Unknown column detected. Retrying with core columns only. Error:', error.message);
+      console.warn('[watchlistService] Unknown column detected. Retrying with core schema columns. Error:', error.message);
 
       const corePayload = {
         user_id: userId,
         movie_id: movieId,
-        title: title,
-        poster_path: posterPath
+        title: payload.title,
+        poster_path: payload.poster_path
       };
 
       const { data: coreData, error: coreError } = await supabase
@@ -70,47 +66,12 @@ export async function addToWatchlist(userId, movie) {
 
       if (!coreError) return coreData;
 
-      console.warn('[watchlistService] Core insert attempt notice:', coreError.message, `(Code: ${coreError.code})`);
-
-      if (coreError.code === '23505' || coreError.message?.includes('duplicate') || coreError.message?.includes('already exists') || coreError.message?.includes('unique constraint')) {
+      if (coreError.code === '23505' || coreError.message?.includes('duplicate') || coreError.message?.includes('already exists')) {
         return { status: 'already_saved', movie_id: movieId };
       }
 
-      // If poster_path column itself does not exist in schema, fallback to minimal columns
-      if (coreError.code === 'PGRST204' || coreError.code === '42703' || coreError.message?.toLowerCase().includes('column')) {
-        const minimalPayload = {
-          user_id: userId,
-          movie_id: movieId,
-          title: title
-        };
-
-        const { data: minData, error: minError } = await supabase
-          .from('watchlist')
-          .insert([minimalPayload])
-          .select();
-
-        if (!minError) return minData;
-        if (minError.code === '23505') return { status: 'already_saved', movie_id: movieId };
-
-        console.error('[watchlistService] Minimal insert failed:', minError.message);
-        throw minError;
-      }
-
+      console.error('[watchlistService] Core fallback insert failed:', coreError.message);
       throw coreError;
-    }
-
-    // Type mismatch fallback (e.g. integer vs text column)
-    if (error.code === '22P02') {
-      const altMovieId = typeof movieId === 'number' ? String(movieId) : Number(movieId);
-      if (!isNaN(altMovieId)) {
-        console.warn(`[watchlistService] Retrying with converted movie_id (${typeof movieId} -> ${typeof altMovieId})`);
-        const { data: altData, error: altError } = await supabase
-          .from('watchlist')
-          .insert([{ ...fullPayload, movie_id: altMovieId }])
-          .select();
-
-        if (!altError) return altData;
-      }
     }
 
     throw error;
@@ -168,16 +129,24 @@ export async function getUserWatchlist(userId) {
   if (!userId) return [];
 
   try {
-    // Attempt sorted query first
+    // Attempt sorted query first by added_at, then created_at
     let result = await supabase
       .from('watchlist')
       .select('*')
       .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+      .order('added_at', { ascending: false });
+
+    // Fallback if added_at column doesn't exist
+    if (result.error) {
+      result = await supabase
+        .from('watchlist')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+    }
 
     // Fallback if created_at column doesn't exist
     if (result.error) {
-      console.warn('[watchlistService] Order by created_at notice:', result.error.message);
       result = await supabase
         .from('watchlist')
         .select('*')
