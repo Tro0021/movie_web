@@ -71,9 +71,9 @@ export default function HomePage({
       
       {/* Cinematic Hero Section */}
       {heroMovie && (
-        <div className="relative w-full rounded-3xl overflow-hidden min-h-[500px] sm:min-h-[540px] flex items-end border border-white/10 shadow-2xl">
+        <div className="relative w-full rounded-[4px] overflow-hidden min-h-[500px] sm:min-h-[540px] flex items-end border border-[#262522] bg-[#121210] shadow-2xl">
           {/* Backdrop Image */}
-          <div className="absolute inset-0 bg-[#0e121c]">
+          <div className="absolute inset-0 bg-[#121210]">
             <img 
               src={heroMovie.backdropUrl || heroMovie.posterUrl} 
               alt={heroMovie.title}
@@ -88,40 +88,40 @@ export default function HomePage({
                 } catch {}
                 e.target.src = "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80";
               }}
-              className="w-full h-full object-cover object-center filter brightness-[0.75] contrast-105"
+              className="w-full h-full object-cover object-center filter brightness-[0.70] contrast-105"
             />
             {/* Cinematic Gradient Vignettes */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0d14] via-[#0a0d14]/70 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0a0d14] via-[#0a0d14]/80 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A09] via-[#0A0A09]/75 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A09] via-[#0A0A09]/80 to-transparent" />
           </div>
 
           {/* Hero Content */}
           <div className="relative z-10 p-6 sm:p-10 lg:p-12 max-w-3xl space-y-4">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-400/20 text-amber-300 border border-amber-400/30">
-                Featured Spotlight
+              <span className="font-mono text-[10px] uppercase tracking-widest px-2.5 py-0.5 rounded-[2px] bg-[#181816] text-[#D9C39A] border border-[#D9C39A]/30">
+                Archival Spotlight
               </span>
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md text-slate-200 border border-white/15">
-                {heroMovie.financials?.verdict || 'Featured'}
+              <span className="font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-[2px] bg-black/80 backdrop-blur-sm text-[#F4F0EA] border border-white/10">
+                {heroMovie.financials?.verdict || 'Archived'}
               </span>
-              <span className="text-xs text-slate-300">
-                Premiere: {heroMovie.premiereDate || heroMovie.releaseDate || 'N/A'} • Release Date: {heroMovie.releaseDate || 'N/A'} • {heroMovie.runtimeMinutes ? `${heroMovie.runtimeMinutes} min` : 'Runtime N/A'}
+              <span className="font-mono text-xs text-[#8C877E]">
+                Release: {heroMovie.releaseDate || 'N/A'} • {heroMovie.runtimeMinutes ? `${heroMovie.runtimeMinutes}m` : 'Runtime N/A'}
               </span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-none font-heading">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-[#F4F0EA] tracking-tight leading-none">
               {heroMovie.title}
             </h1>
 
-            <p className="text-sm sm:text-base text-slate-300 line-clamp-3 leading-relaxed max-w-2xl font-normal">
+            <p className="text-sm sm:text-base text-[#8C877E] line-clamp-3 leading-relaxed max-w-2xl font-sans">
               {heroMovie.synopsis}
             </p>
 
             {/* Financial & Critical Quick Metrics */}
-            <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-2 border-t border-white/10">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-3 border-t border-[#262522]">
               <div>
-                <span className="text-[10px] text-slate-400 uppercase font-semibold block">Worldwide Box Office</span>
-                <span className="text-lg sm:text-xl font-extrabold text-emerald-400 font-heading">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#8C877E] block">Worldwide Box Office</span>
+                <span className="text-xl sm:text-2xl font-mono text-[#D9C39A] tabular-nums font-medium">
                   {formatCurrency(
                     heroMovie.financials?.worldwideGross || heroMovie.financials?.worldwideGrossRaw, 
                     currentCountry, 
@@ -129,19 +129,18 @@ export default function HomePage({
                   )}
                 </span>
               </div>
-              <div className="h-8 w-px bg-white/10 hidden sm:block" />
+              <div className="h-8 w-px bg-[#262522] hidden sm:block" />
               <div>
-                <span className="text-[10px] text-slate-400 uppercase font-semibold block">Critical Consensus</span>
-                <div className="flex items-center gap-1.5">
-                  <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-                  <span className="text-lg font-bold text-white font-heading">{heroMovie.ratings?.imdb?.score || 'N/A'}</span>
-                  <span className="text-xs text-slate-400">/10 IMDb</span>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#8C877E] block">Critical Consensus</span>
+                <div className="flex items-center gap-1.5 font-mono text-lg text-[#F4F0EA] tabular-nums">
+                  <span className="text-[#D9C39A]">★ {heroMovie.ratings?.imdb?.score || 'N/A'}</span>
+                  <span className="text-xs text-[#8C877E]">/10 IMDb</span>
                 </div>
               </div>
-              <div className="h-8 w-px bg-white/10 hidden sm:block" />
+              <div className="h-8 w-px bg-[#262522] hidden sm:block" />
               <div>
-                <span className="text-[10px] text-slate-400 uppercase font-semibold block">Director</span>
-                <span className="text-sm font-bold text-white">{heroMovie.director}</span>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#8C877E] block">Director</span>
+                <span className="text-sm font-medium text-[#F4F0EA] font-sans">{heroMovie.director}</span>
               </div>
             </div>
 
@@ -149,31 +148,31 @@ export default function HomePage({
             <div className="flex flex-wrap items-center gap-3 pt-3">
               <button
                 onClick={() => onSelectMovie(heroMovie)}
-                className="px-6 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-black font-bold text-sm shadow-xl shadow-black/40 transition-all flex items-center gap-2 group cursor-pointer"
+                className="px-5 py-2.5 rounded-[2px] bg-[#E03C31] hover:bg-[#C83228] text-white font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-2 group cursor-pointer shadow-md"
               >
-                <Info className="w-4 h-4" />
-                <span>Explore Dossier & Theatrical Run</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                <Info className="w-3.5 h-3.5" />
+                <span>Examine Ledger &amp; Run</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
               </button>
 
               <button
                 onClick={() => onPlayTrailer(heroMovie)}
-                className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm backdrop-blur-md transition-all flex items-center gap-2 border border-white/10 cursor-pointer"
+                className="px-4 py-2.5 rounded-[2px] bg-[#121210] hover:bg-[#181816] text-[#F4F0EA] font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-2 border border-[#262522] cursor-pointer"
               >
-                <Play className="w-4 h-4 fill-white" />
-                <span>Watch Trailer</span>
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>35mm Trailer</span>
               </button>
 
               <button
                 onClick={() => onToggleWatchlist(heroMovie)}
-                className={`p-3 rounded-2xl backdrop-blur-md transition-all border cursor-pointer ${
+                className={`p-2.5 rounded-[2px] transition-all border cursor-pointer ${
                   isHeroWatchlisted 
-                    ? 'bg-amber-400 border-amber-400 text-black shadow-lg shadow-black/30' 
-                    : 'bg-black/50 border-white/15 text-white hover:bg-black/70'
+                    ? 'bg-[#E03C31] border-[#E03C31] text-white shadow' 
+                    : 'bg-[#121210] border-[#262522] text-[#8C877E] hover:text-[#F4F0EA] hover:bg-[#181816]'
                 }`}
                 title="Save to Watchlist"
               >
-                <Bookmark className={`w-4 h-4 ${isHeroWatchlisted ? 'fill-black' : ''}`} />
+                <Bookmark className={`w-4 h-4 ${isHeroWatchlisted ? 'fill-current' : ''}`} />
               </button>
             </div>
           </div>
@@ -182,27 +181,27 @@ export default function HomePage({
 
       {/* Feature Section 1: Curated Cinema Archive Banner */}
       {tasteProfile ? (
-        <div className="rounded-2xl p-6 sm:p-7 bg-[#121622] border border-amber-500/30 glass-card space-y-4">
+        <div className="rounded-[4px] p-6 sm:p-7 bg-[#121210] border border-[#262522] space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-300 border border-amber-400/30 flex items-center justify-center font-bold">
-                <Film className="w-5 h-5 text-amber-400" />
+              <div className="w-9 h-9 rounded-[2px] bg-[#181816] border border-[#262522] text-[#D9C39A] flex items-center justify-center">
+                <Film className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white font-heading">
-                  Your Curated Cinema Archive
+                <h3 className="font-serif text-xl sm:text-2xl text-[#F4F0EA]">
+                  Your Curated Cinema Vault
                 </h3>
-                <p className="text-xs text-slate-400">
-                  Filtered by your selected genres: <span className="text-slate-200 font-medium">{tasteProfile.genres?.join(', ')}</span>
+                <p className="text-xs text-[#8C877E]">
+                  Calibrated to your selected genres: <span className="text-[#D9C39A] font-mono">{tasteProfile.genres?.join(', ')}</span>
                 </p>
               </div>
             </div>
 
             <button
               onClick={onOpenTasteModal}
-              className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-center"
+              className="px-3.5 py-1.5 rounded-[2px] bg-[#181816] hover:bg-[#201F1D] border border-[#262522] text-[#F4F0EA] font-mono text-xs uppercase tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-center"
             >
-              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <SlidersHorizontal className="w-3.5 h-3.5 text-[#D9C39A]" />
               <span>Re-Tune Cinema</span>
             </button>
           </div>
@@ -214,9 +213,9 @@ export default function HomePage({
                 <div 
                   key={movie.id}
                   onClick={() => onSelectMovie(movie)}
-                  className="group p-3 rounded-2xl bg-[#0e121c] border border-white/5 hover:border-amber-400/40 cursor-pointer transition-all flex flex-col justify-between space-y-2 shadow-lg hover:-translate-y-1"
+                  className="group p-2.5 rounded-[4px] bg-[#121210] border border-[#262522] hover:border-[#D9C39A]/40 cursor-pointer transition-all flex flex-col justify-between space-y-2 hover:-translate-y-1"
                 >
-                  <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-slate-900">
+                  <div className="relative aspect-[2/3] rounded-[2px] overflow-hidden bg-[#181816] border border-white/10">
                     <img 
                       src={movie.posterUrl} 
                       alt={movie.title} 
@@ -233,87 +232,87 @@ export default function HomePage({
                       }}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform" 
                     />
-                    <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-400 text-black shadow">
+                    <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded-[2px] font-mono text-[9px] uppercase bg-black/80 text-[#D9C39A] border border-[#D9C39A]/30">
                       {movie.genres?.[0] || 'Curated'}
                     </span>
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-white truncate group-hover:text-amber-300">{movie.title}</h4>
-                    <p className="text-[10px] text-amber-300/80 truncate">{movie.genres?.slice(0, 2).join(' • ')}</p>
+                    <h4 className="text-xs font-medium text-[#F4F0EA] truncate group-hover:text-[#D9C39A]">{movie.title}</h4>
+                    <p className="font-mono text-[10px] text-[#8C877E] truncate">{movie.genres?.slice(0, 2).join(' · ')}</p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="p-6 rounded-2xl bg-[#0a0d14] border border-white/5 text-center space-y-2">
-              <p className="text-xs text-slate-300">
+            <div className="p-6 rounded-[4px] bg-[#181816] border border-[#262522] text-center space-y-2">
+              <p className="text-xs text-[#8C877E]">
                 No films in the vault currently match your exact selected genres.
               </p>
               <button
                 onClick={onOpenTasteModal}
-                className="px-4 py-1.5 rounded-xl bg-amber-400/15 hover:bg-amber-400/25 text-amber-300 text-xs font-bold transition-colors cursor-pointer"
+                className="px-4 py-1.5 rounded-[2px] bg-[#121210] hover:bg-[#201F1D] border border-[#262522] text-[#D9C39A] font-mono text-xs uppercase transition-colors cursor-pointer"
               >
-                Select More Genres
+                Expand Genre Filters
               </button>
             </div>
           )}
         </div>
       ) : (
-        <div className="rounded-2xl p-6 sm:p-7 bg-[#121622] border border-amber-500/20 hover:border-amber-400/40 glass-card flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="rounded-[4px] p-6 sm:p-7 bg-[#121210] border border-[#262522] flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 flex-shrink-0">
-              <Film className="w-6 h-6" />
+            <div className="w-10 h-10 rounded-[2px] bg-[#181816] border border-[#262522] flex items-center justify-center text-[#D9C39A] flex-shrink-0">
+              <Film className="w-5 h-5" />
             </div>
             <div className="space-y-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 block">
-                Personalized Curation
+              <span className="font-mono text-[10px] uppercase tracking-wider text-[#D9C39A] block">
+                Personalized Archival Curation
               </span>
-              <h3 className="text-lg sm:text-xl font-bold text-white font-heading">
-                Build Your Personal Curated Cinema Archive
+              <h3 className="font-serif text-xl sm:text-2xl text-[#F4F0EA]">
+                Build Your Personal Curated Cinema Vault
               </h3>
-              <p className="text-xs text-slate-400 max-w-xl">
-                Select your favorite cinema genres and narrative movements to generate a bespoke, personalized film vault.
+              <p className="text-xs text-[#8C877E] max-w-xl">
+                Select your preferred cinema genres and narrative traditions to tune an authentic, bespoke film ledger.
               </p>
             </div>
           </div>
 
           <button
             onClick={onOpenTasteModal}
-            className="px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-bold text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer flex-shrink-0"
+            className="px-5 py-2.5 rounded-[2px] bg-[#E03C31] hover:bg-[#C83228] text-white font-mono text-xs uppercase tracking-widest transition-all shadow flex items-center gap-2 cursor-pointer flex-shrink-0"
           >
-            <Sparkles className="w-4 h-4" />
-            <span>Curate Cinema Archive</span>
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Calibrate Vault</span>
           </button>
         </div>
       )}
 
       {/* Feature Section 2: Regional Cinema Spotlight */}
       <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#262522] pb-4">
           <div>
             <div className="flex items-center gap-2">
-              <Globe className="w-5 h-5 text-amber-400" />
-              <h2 className="text-2xl font-bold text-white font-heading flex items-center gap-2">
+              <Globe className="w-4 h-4 text-[#D9C39A]" />
+              <h2 className="font-serif text-2xl sm:text-3xl text-[#F4F0EA]">
                 {currentCountry === 'ALL'
                   ? 'Global Cinema Vault'
                   : `Made in ${activeCountryObj.name}`}
               </h2>
             </div>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-[#8C877E] mt-1">
               {currentCountry === 'ALL'
-                ? 'Films from every territory in our catalog'
+                ? 'Films from every territory in our audited catalog'
                 : regionalMoviesRaw.length > 0
-                  ? `${regionalMovies.length} film${regionalMovies.length !== 1 ? 's' : ''} produced in ${activeCountryObj.name}`
+                  ? `${regionalMovies.length} title${regionalMovies.length !== 1 ? 's' : ''} produced in ${activeCountryObj.name}`
                   : `No productions from ${activeCountryObj.name} yet — showing titles available there`}
             </p>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400">Switch Region:</span>
+            <span className="font-mono text-[11px] text-[#8C877E] uppercase">Territory:</span>
             <select
               value={currentCountry}
               onChange={(e) => onCountryChange(e.target.value)}
-              className="bg-[#121622] border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-400 cursor-pointer"
+              className="bg-[#121210] border border-[#262522] rounded-[2px] px-3 py-1.5 text-xs font-mono text-[#F4F0EA] focus:outline-none focus:border-[#D9C39A] cursor-pointer"
             >
               {COUNTRY_OPTIONS.map(c => (
                 <option key={c.code} value={c.code}>
@@ -344,29 +343,29 @@ export default function HomePage({
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold text-white font-heading flex items-center gap-2">
-                <Film className="w-5 h-5 text-amber-400" />
+              <h2 className="font-serif text-2xl sm:text-3xl text-[#F4F0EA] flex items-center gap-2">
+                <Film className="w-4 h-4 text-[#D9C39A]" />
                 Curated Cinema Archive
               </h2>
               <button
                 onClick={onRefreshMovies}
-                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer text-xs flex items-center gap-1"
+                className="p-1.5 rounded-[2px] bg-[#121210] hover:bg-[#181816] border border-[#262522] text-[#8C877E] hover:text-[#F4F0EA] transition-colors cursor-pointer text-xs flex items-center gap-1 font-mono"
                 title="Shuffle Film Vault with new titles"
               >
-                <RotateCw className="w-3.5 h-3.5 text-amber-400" />
-                <span className="hidden sm:inline">Shuffle Titles</span>
+                <RotateCw className="w-3 h-3 text-[#D9C39A]" />
+                <span className="hidden sm:inline text-[10px] uppercase">Rotate Titles</span>
               </button>
             </div>
-            <p className="text-xs text-slate-400">Audited box office collections, distributor splits & global streaming rights</p>
+            <p className="text-xs text-[#8C877E]">Audited box office collections, distributor splits &amp; global distribution rights</p>
           </div>
 
           {/* Sorter */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400 font-medium">Sort By:</span>
+            <span className="font-mono text-[11px] text-[#8C877E] uppercase">Sort Ledger:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="bg-[#121622] border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-400 cursor-pointer"
+              className="bg-[#121210] border border-[#262522] rounded-[2px] px-3 py-1.5 text-xs font-mono text-[#F4F0EA] focus:outline-none focus:border-[#D9C39A] cursor-pointer"
             >
               <option value="gross">Worldwide Gross</option>
               <option value="rating">IMDb Rating</option>
@@ -375,16 +374,16 @@ export default function HomePage({
           </div>
         </div>
 
-        {/* Genre Pill Filters */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2">
+        {/* Genre Pill Filters -> Sharp Architectural Tabs */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-2">
           {allGenres.map(genre => (
             <button
               key={genre}
               onClick={() => setSelectedGenre(genre)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-[2px] text-xs font-mono uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer ${
                 selectedGenre === genre
-                  ? 'bg-amber-400 text-black shadow-md'
-                  : 'bg-[#121622] text-slate-300 hover:text-white border border-white/10'
+                  ? 'bg-[#181816] text-[#F4F0EA] border border-[#D9C39A]/60 font-medium'
+                  : 'bg-[#121210] text-[#8C877E] hover:text-[#F4F0EA] border border-[#262522]'
               }`}
             >
               {genre === 'ALL' ? 'All Genres' : genre}

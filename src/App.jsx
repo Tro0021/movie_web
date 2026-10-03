@@ -399,7 +399,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0d14] text-slate-100 flex flex-col font-sans selection:bg-amber-500 selection:text-black antialiased relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#0A0A09] text-[#F4F0EA] flex flex-col font-sans selection:bg-[#E03C31] selection:text-white antialiased relative overflow-x-hidden">
       
       {/* Streamlined Top Navbar */}
       <Navbar
@@ -439,11 +439,11 @@ export default function App() {
       {/* Floating Status Notification Toast */}
       {notification && (
         <div className="fixed top-20 right-6 z-[70] animate-fade-in">
-          <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#141a27] border border-white/10 shadow-2xl text-xs font-semibold text-white">
+          <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-[4px] bg-[#181816] border border-[#262522] shadow-2xl text-xs font-mono text-[#F4F0EA]">
             {notification.type === 'success' ? (
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
             ) : (
-              <Film className="w-4 h-4 text-amber-400" />
+              <Film className="w-3.5 h-3.5 text-[#E03C31]" />
             )}
             <span>{notification.msg}</span>
           </div>
@@ -455,13 +455,13 @@ export default function App() {
         
         {/* Loading Overlay */}
         {isLoadingMovie && (
-          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center gap-3">
-            <Loader2 className="w-9 h-9 text-amber-400 animate-spin" />
-            <h3 className="text-base font-bold text-white font-heading">
+          <div className="fixed inset-0 z-50 bg-[#0A0A09]/85 backdrop-blur-xs flex flex-col items-center justify-center gap-3">
+            <Loader2 className="w-8 h-8 text-[#D9C39A] animate-spin" />
+            <h3 className="text-xl font-serif text-[#F4F0EA]">
               Loading Film Dossier & Theatrical Data...
             </h3>
-            <p className="text-xs text-slate-400">
-              Querying Kinova Microservice, Box Office Mojo & OTT Distribution ({currentCountry})
+            <p className="text-xs font-mono text-[#8C877E]">
+              Querying Kinova Microservice, Box Office Mojo & Exhibition Windows ({currentCountry})
             </p>
           </div>
         )}
@@ -470,8 +470,8 @@ export default function App() {
         <Suspense fallback={
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="flex flex-col items-center gap-3">
-              <Loader2 className="w-8 h-8 text-amber-400 animate-spin" />
-              <span className="text-xs text-slate-500 font-medium tracking-widest uppercase">Loading</span>
+              <Loader2 className="w-8 h-8 text-[#D9C39A] animate-spin" />
+              <span className="text-xs text-[#8C877E] font-mono tracking-widest uppercase">Loading Ledger</span>
             </div>
           </div>
         }>

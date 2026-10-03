@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import { 
   ArrowLeft, Play, Bookmark, Star, 
   DollarSign, Tv, Globe, Share2, 
-  Sparkles, Check, Cloud, Award, Users, Film, Calendar
+  Check, Cloud, Award, Users, Film, Calendar
 } from 'lucide-react';
 import FinancialsHub from '../components/FinancialsHub';
 import StreamingTicketing from '../components/StreamingTicketing';
 import GlobalContextSection from '../components/GlobalContextModal';
 import ReviewAggregator from '../components/ReviewAggregator';
 import MovieCard from '../components/MovieCard';
-import { formatCurrency } from '../services/financialUtils';
 import { resolveMoviePoster, resolveMovieBackdrop } from '../services/mediaResolver';
 import { MOCK_MOVIES } from '../data/mockMovies';
 import { useRegion } from '../context/RegionContext';
@@ -45,10 +44,9 @@ export default function MovieDetailsPage({
   const formatReleaseDate = (dateStr) => {
     if (!dateStr) return 'TBA';
     try {
-      return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
     } catch { return dateStr; }
   };
-
 
   const currentMovieId = String(movie.tmdbId || movie.id);
   const isWatchlisted = watchlist.some(m => 
@@ -57,7 +55,6 @@ export default function MovieDetailsPage({
     String(m.id) === String(movie.id)
   );
 
-  // If unauthenticated, trigger auth modal; otherwise toggle watchlist in Supabase
   const handleWatchlistClick = () => {
     if (!user && onOpenAuth) {
       onOpenAuth();
@@ -74,7 +71,6 @@ export default function MovieDetailsPage({
     }
   };
 
-  // Find similar movies safely
   const similarMovies = (allMovies || []).filter(
     m => m && m.id !== movie.id && (
       movie.similarMovieIds?.includes(m.id) ||
@@ -84,48 +80,48 @@ export default function MovieDetailsPage({
   );
 
   return (
-    <div className="space-y-8 pb-20 animate-fade-in">
+    <div className="space-y-8 pb-20 animate-fade-in font-sans">
       {/* Back button & Breadcrumb */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between border-b border-[#262522] pb-4">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 hover:text-white transition-colors"
+          className="flex items-center gap-2 px-3.5 py-1.5 rounded-[4px] bg-[#121210] hover:bg-[#181816] border border-[#262522] text-xs font-mono text-[#8C877E] hover:text-[#F4F0EA] transition-colors cursor-pointer"
         >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to Film Vault</span>
+          <ArrowLeft className="w-3.5 h-3.5 text-[#E03C31]" />
+          <span>RETURN TO VAULT</span>
         </button>
 
         <div className="flex items-center gap-2">
           <button
             onClick={handleShare}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] bg-[#121210] hover:bg-[#181816] border border-[#262522] text-xs font-mono text-[#8C877E] hover:text-[#F4F0EA] transition-colors cursor-pointer"
           >
-            {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5" />}
-            <span>{copiedLink ? 'Link Copied!' : 'Share'}</span>
+            {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-[#8C877E]" />}
+            <span>{copiedLink ? 'COPIED' : 'SHARE'}</span>
           </button>
 
           <button
             onClick={handleWatchlistClick}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
+            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-[4px] text-xs font-mono font-medium transition-all cursor-pointer ${
               isWatchlisted
-                ? 'bg-amber-500 text-black shadow-glow-gold'
-                : 'bg-white/10 text-white hover:bg-white/20'
+                ? 'bg-[#181816] text-[#D9C39A] border border-[#D9C39A]/40'
+                : 'bg-[#121210] text-[#8C877E] hover:text-[#F4F0EA] border border-[#262522] hover:border-[#8C877E]'
             }`}
             title={!user ? "Sign in to save movies to your cloud watchlist" : isWatchlisted ? "In Watchlist" : "Save to Watchlist"}
           >
-            <Bookmark className={`w-3.5 h-3.5 ${isWatchlisted ? 'fill-black' : ''}`} />
-            <span>{isWatchlisted ? 'In Watchlist' : 'Save to Watchlist'}</span>
+            <Bookmark className={`w-3.5 h-3.5 ${isWatchlisted ? 'fill-[#D9C39A] text-[#D9C39A]' : 'text-[#8C877E]'}`} />
+            <span>{isWatchlisted ? 'ARCHIVED' : 'ARCHIVE ENTRY'}</span>
             {user && (
-              <Cloud className="w-3 h-3 text-emerald-400 opacity-80" />
+              <Cloud className="w-3 h-3 text-[#D9C39A] opacity-80" />
             )}
           </button>
         </div>
       </div>
 
       {/* Cinematic Hero Header */}
-      <div className="relative rounded-3xl overflow-hidden border border-white/10 glass-card bg-[#090d18] shadow-2xl">
+      <div className="relative rounded-[4px] overflow-hidden border border-[#262522] bg-[#121210] shadow-2xl">
         {/* Backdrop Image */}
-        <div className="absolute inset-0 h-96 sm:h-[450px] bg-[#090d18]">
+        <div className="absolute inset-0 h-96 sm:h-[450px] bg-[#0A0A09]">
           <img 
             src={movie.backdropUrl || movie.posterUrl} 
             alt={movie.title}
@@ -140,15 +136,15 @@ export default function MovieDetailsPage({
               } catch {}
               e.target.src = "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80";
             }}
-            className="w-full h-full object-cover object-center filter brightness-50 contrast-110"
+            className="w-full h-full object-cover object-center filter brightness-40 contrast-125 opacity-40"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#090d18] via-[#090d18]/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#121210] via-[#121210]/90 to-transparent" />
         </div>
 
         {/* Content Container */}
-        <div className="relative z-10 p-6 sm:p-8 lg:p-10 pt-32 sm:pt-48 flex flex-col md:flex-row gap-8 items-start">
+        <div className="relative z-10 p-6 sm:p-8 lg:p-10 pt-28 sm:pt-40 flex flex-col md:flex-row gap-8 items-start">
           {/* Poster Column */}
-          <div className="w-44 sm:w-56 md:w-64 flex-shrink-0 mx-auto md:mx-0 shadow-2xl rounded-2xl overflow-hidden border-2 border-white/20 relative group bg-slate-900">
+          <div className="w-44 sm:w-56 md:w-64 flex-shrink-0 mx-auto md:mx-0 rounded-[4px] overflow-hidden border border-white/15 relative group bg-[#181816] shadow-2xl">
             <img 
               src={movie.posterUrl} 
               alt={movie.title}
@@ -168,10 +164,10 @@ export default function MovieDetailsPage({
             {movie.youtubeTrailerId && (
               <button
                 onClick={() => onPlayTrailer(movie)}
-                className="absolute inset-0 m-auto w-14 h-14 rounded-full bg-rose-600/90 text-white flex items-center justify-center shadow-glow-crimson group-hover:scale-110 transition-transform"
+                className="absolute inset-0 m-auto w-12 h-12 rounded-[4px] bg-[#E03C31] text-white flex items-center justify-center hover:bg-[#c83228] transition-all cursor-pointer shadow-lg"
                 title="Play Trailer"
               >
-                <Play className="w-6 h-6 ml-0.5 fill-white" />
+                <Play className="w-5 h-5 ml-0.5 fill-white" />
               </button>
             )}
           </div>
@@ -181,76 +177,69 @@ export default function MovieDetailsPage({
             <div className="flex flex-wrap items-center gap-2">
               {/* Verdict / Status Badge */}
               {isUpcoming ? (
-                <span className="px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-sky-500/15 text-sky-300 border border-sky-500/30 flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5" />
-                  {movie.tmdbStatus === 'In Production' ? 'In Production'
-                    : movie.tmdbStatus === 'Post Production' ? 'Post Production'
-                    : movie.tmdbStatus === 'Planned' ? 'Planned'
-                    : 'Upcoming'}
+                <span className="px-2 py-0.5 rounded-[2px] font-mono text-[10px] uppercase tracking-wider bg-[#181816] text-sky-400 border border-sky-500/30 flex items-center gap-1.5">
+                  <Calendar className="w-3 h-3" />
+                  {movie.tmdbStatus === 'In Production' ? 'IN PRODUCTION'
+                    : movie.tmdbStatus === 'Post Production' ? 'POST PRODUCTION'
+                    : movie.tmdbStatus === 'Planned' ? 'PLANNED'
+                    : 'UPCOMING'}
                 </span>
               ) : (
-                <span className="px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                  {movie.financials?.verdict || 'Featured'}
+                <span className="px-2 py-0.5 rounded-[2px] font-mono text-[10px] uppercase tracking-wider bg-[#181816] text-[#D9C39A] border border-[#D9C39A]/30">
+                  {movie.financials?.verdict || 'FEATURED ARCHIVE'}
                 </span>
               )}
               {isUpcoming && movie.releaseDate && (
-                <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-sky-400/10 text-sky-200 border border-sky-400/25 flex items-center gap-1">
-                  <Calendar className="w-3 h-3" /> Releases: {formatReleaseDate(movie.releaseDate)}
+                <span className="px-2 py-0.5 rounded-[2px] font-mono text-[10px] bg-[#181816] text-[#8C877E] border border-[#262522] flex items-center gap-1">
+                  <Calendar className="w-3 h-3 text-[#E03C31]" /> DUE: {formatReleaseDate(movie.releaseDate)}
                 </span>
               )}
               {!isUpcoming && (
-                <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-400/10 text-amber-300 border border-amber-400/25">
-                  Premiere: {movie.premiereDate || movie.releaseDate}
+                <span className="px-2 py-0.5 rounded-[2px] font-mono text-[10px] bg-[#181816] text-[#8C877E] border border-[#262522]">
+                  PREMIERE: {movie.premiereDate || movie.releaseDate}
                 </span>
               )}
-              <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-white/10 text-white border border-white/10">
-                Release Date: {movie.releaseDate || 'TBA'}
-              </span>
-              <span className="text-xs text-slate-300">
-                {movie.runtimeMinutes ? `${movie.runtimeMinutes} min` : isUpcoming ? 'Runtime: TBA' : 'Runtime N/A'}
+              <span className="px-2 py-0.5 rounded-[2px] font-mono text-[10px] bg-[#181816] text-[#8C877E] border border-[#262522]">
+                RUNTIME: {movie.runtimeMinutes ? `${movie.runtimeMinutes}M` : isUpcoming ? 'TBA' : 'N/A'}
               </span>
               {(() => {
-                // Certification badge: TBA for upcoming, otherwise real cert
                 const badgeCert = isUpcoming ? 'TBA'
                   : (movie.primaryCertification || 
                      movie.certification || 
                      movie.globalContext?.primaryCertification || 
                      movie.globalContext?.certifications?.[0]?.rating || 
-                     'Not Rated');
-                const badgeClass = isUpcoming
-                  ? 'bg-sky-500/10 text-sky-300 border-sky-500/20'
-                  : 'bg-white/10 text-white border-white/10';
+                     'NR');
                 return (
-                  <span className={`px-2 py-0.5 rounded text-[11px] font-bold border tracking-wide ${badgeClass}`}>
+                  <span className="px-1.5 py-0.5 rounded-[2px] font-mono text-[10px] font-semibold border tracking-wider bg-[#181816] text-[#D9C39A] border-[#262522]">
                     {badgeCert}
                   </span>
                 );
               })()}
             </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white font-heading tracking-tight leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-[#F4F0EA] tracking-tight leading-tight">
               {movie.title}
             </h1>
 
             {movie.tagline && (
-              <p className="text-sm sm:text-base italic text-amber-200/90 font-medium">
+              <p className="text-sm sm:text-base italic font-serif text-[#D9C39A]/90">
                 "{movie.tagline}"
               </p>
             )}
 
-            <p className="text-sm text-slate-300 leading-relaxed max-w-3xl">
+            <p className="text-sm text-[#8C877E] leading-relaxed max-w-3xl">
               {movie.synopsis}
             </p>
 
-            {/* Quick Metrics Bar */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-white/10">
-              <div>
-                <span className="text-[11px] text-slate-400 block font-medium">Director</span>
-                <span className="text-sm font-bold text-white">{movie.director}</span>
+            {/* Quick Metrics Bar / Trade Ledger Bar */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-[#262522]">
+              <div className="bg-[#181816] p-2.5 rounded-[4px] border border-[#262522]">
+                <span className="text-[10px] font-mono text-[#8C877E] uppercase block tracking-wider">Director</span>
+                <span className="text-xs font-semibold text-[#F4F0EA] truncate block">{movie.director}</span>
               </div>
-              <div>
-                <span className="text-[11px] text-slate-400 block font-medium">Worldwide Gross</span>
-                <span className="text-sm font-bold text-emerald-400 font-heading">
+              <div className="bg-[#181816] p-2.5 rounded-[4px] border border-[#262522]">
+                <span className="text-[10px] font-mono text-[#8C877E] uppercase block tracking-wider">Worldwide Gross</span>
+                <span className="text-xs font-mono font-semibold tabular-nums text-[#D9C39A]">
                   {isUpcoming
                     ? <span className="text-sky-400">Unreleased</span>
                     : formatRegionCurrency(
@@ -261,9 +250,9 @@ export default function MovieDetailsPage({
                   }
                 </span>
               </div>
-              <div>
-                <span className="text-[11px] text-slate-400 block font-medium">Budget</span>
-                <span className="text-sm font-bold text-slate-200 font-heading">
+              <div className="bg-[#181816] p-2.5 rounded-[4px] border border-[#262522]">
+                <span className="text-[10px] font-mono text-[#8C877E] uppercase block tracking-wider">Production Budget</span>
+                <span className="text-xs font-mono font-semibold tabular-nums text-[#F4F0EA]">
                   {formatRegionCurrency(
                     movie.financials?.budget || movie.financials?.budgetRaw, 
                     activeRegion, 
@@ -271,14 +260,14 @@ export default function MovieDetailsPage({
                   )}
                 </span>
               </div>
-              <div>
-                <span className="text-[11px] text-slate-400 block font-medium">IMDb Rating</span>
-                <div className="flex items-center gap-1 text-sm font-bold text-amber-400">
+              <div className="bg-[#181816] p-2.5 rounded-[4px] border border-[#262522]">
+                <span className="text-[10px] font-mono text-[#8C877E] uppercase block tracking-wider">IMDb Consensus</span>
+                <div className="flex items-center gap-1 text-xs font-mono font-semibold tabular-nums text-[#D9C39A]">
                   {isUpcoming ? (
-                    <span className="text-sky-400 font-semibold text-xs">Unreleased</span>
+                    <span className="text-sky-400 text-[10px]">Unreleased</span>
                   ) : (
                     <>
-                      <Star className="w-3.5 h-3.5 fill-amber-400" />
+                      <Star className="w-3 h-3 fill-[#D9C39A] text-[#D9C39A]" />
                       <span>{movie.ratings?.imdb?.score || 'N/A'} / 10</span>
                     </>
                   )}
@@ -289,13 +278,13 @@ export default function MovieDetailsPage({
             {/* Genre & Curator Tags */}
             <div className="flex flex-wrap gap-1.5 pt-2">
               {movie.genres?.map((genre, idx) => (
-                <span key={idx} className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/5 text-slate-300 border border-white/10">
+                <span key={idx} className="px-2 py-0.5 rounded-[2px] font-mono text-[10px] uppercase bg-[#181816] text-[#8C877E] border border-[#262522]">
                   {genre}
                 </span>
               ))}
               {movie.aiTags?.map((tag, idx) => (
-                <span key={idx} className="px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-500/10 text-amber-200/90 border border-amber-500/20 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                <span key={idx} className="px-2 py-0.5 rounded-[2px] font-mono text-[10px] uppercase bg-[#181816] text-[#D9C39A] border border-[#D9C39A]/20 flex items-center gap-1">
+                  <span className="w-1 h-1 rounded-full bg-[#E03C31]" />
                   {tag}
                 </span>
               ))}
@@ -306,26 +295,26 @@ export default function MovieDetailsPage({
               {movie.youtubeTrailerId && (
                 <button
                   onClick={() => onPlayTrailer(movie)}
-                  className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-lg shadow-black/40 transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2 rounded-[4px] bg-[#E03C31] hover:bg-[#c83228] text-white font-mono text-xs font-semibold uppercase tracking-wider transition-colors flex items-center gap-2 cursor-pointer"
                 >
-                  <Play className="w-4 h-4 fill-white" />
-                  <span>Watch Trailer</span>
+                  <Play className="w-3.5 h-3.5 fill-white" />
+                  <span>35mm Trailer Projection</span>
                 </button>
               )}
 
               <button
                 onClick={handleWatchlistClick}
-                className={`px-5 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center gap-2 cursor-pointer ${
+                className={`px-4 py-2 rounded-[4px] font-mono text-xs font-semibold uppercase tracking-wider transition-colors flex items-center gap-2 cursor-pointer ${
                   isWatchlisted
-                    ? 'bg-amber-400 text-black shadow-lg shadow-black/30'
-                    : 'bg-white/10 hover:bg-white/20 text-white border border-white/10'
+                    ? 'bg-[#181816] text-[#D9C39A] border border-[#D9C39A]/40'
+                    : 'bg-[#181816] hover:bg-[#20201d] text-[#F4F0EA] border border-[#262522] hover:border-[#8C877E]'
                 }`}
                 title={!user ? "Sign in to save movies to your cloud watchlist" : isWatchlisted ? "Saved in Watchlist" : "Save to Watchlist"}
               >
-                <Bookmark className={`w-4 h-4 ${isWatchlisted ? 'fill-black' : ''}`} />
-                <span>{isWatchlisted ? 'Saved in Watchlist' : 'Save to Watchlist'}</span>
+                <Bookmark className={`w-3.5 h-3.5 ${isWatchlisted ? 'fill-[#D9C39A] text-[#D9C39A]' : 'text-[#8C877E]'}`} />
+                <span>{isWatchlisted ? 'Archived to Vault' : 'Add to Ledger Vault'}</span>
                 {user && (
-                  <Cloud className="w-3.5 h-3.5 text-emerald-400 opacity-80" />
+                  <Cloud className="w-3 h-3 text-[#D9C39A] opacity-80" />
                 )}
               </button>
             </div>
@@ -334,66 +323,31 @@ export default function MovieDetailsPage({
       </div>
 
       {/* Interactive Module Navigation Tabs */}
-      <div className="flex items-center gap-1 sm:gap-2 border-b border-white/10 overflow-x-auto pb-1">
-        <button
-          onClick={() => setActiveTab('financials')}
-          className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-semibold rounded-t-xl transition-all whitespace-nowrap cursor-pointer ${
-            activeTab === 'financials'
-              ? 'text-amber-300 border-b-2 border-amber-400 bg-white/[0.04]'
-              : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          <DollarSign className="w-4 h-4" />
-          <span>Financials Hub</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('streaming')}
-          className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-semibold rounded-t-xl transition-all whitespace-nowrap cursor-pointer ${
-            activeTab === 'streaming'
-              ? 'text-amber-300 border-b-2 border-amber-400 bg-white/[0.04]'
-              : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          <Tv className="w-4 h-4" />
-          <span>Streaming & Theaters</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('global')}
-          className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-semibold rounded-t-xl transition-all whitespace-nowrap cursor-pointer ${
-            activeTab === 'global'
-              ? 'text-amber-300 border-b-2 border-amber-400 bg-white/[0.04]'
-              : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          <Globe className="w-4 h-4" />
-          <span>Global Certifications</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('reviews')}
-          className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-semibold rounded-t-xl transition-all whitespace-nowrap cursor-pointer ${
-            activeTab === 'reviews'
-              ? 'text-amber-300 border-b-2 border-amber-400 bg-white/[0.04]'
-              : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          <Award className="w-4 h-4" />
-          <span>Critical Consensus</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('cast')}
-          className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-semibold rounded-t-xl transition-all whitespace-nowrap cursor-pointer ${
-            activeTab === 'cast'
-              ? 'text-amber-300 border-b-2 border-amber-400 bg-white/[0.04]'
-              : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          <Users className="w-4 h-4" />
-          <span>Cast & Production</span>
-        </button>
+      <div className="flex items-center gap-1 border-b border-[#262522] overflow-x-auto pb-px">
+        {[
+          { id: 'financials', label: 'Financial Ledger', icon: DollarSign },
+          { id: 'streaming', label: 'Exhibition & OTT', icon: Tv },
+          { id: 'global', label: 'Territories & Censors', icon: Globe },
+          { id: 'reviews', label: 'Critical Consensus', icon: Award },
+          { id: 'cast', label: 'Personnel & Auteurs', icon: Users },
+        ].map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-4 py-2.5 text-xs font-mono uppercase tracking-wider rounded-t-[4px] border-b-2 transition-all whitespace-nowrap cursor-pointer ${
+                isActive
+                  ? 'text-[#F4F0EA] border-[#E03C31] bg-[#121210]'
+                  : 'text-[#8C877E] hover:text-[#F4F0EA] border-transparent hover:bg-[#121210]/50'
+              }`}
+            >
+              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#E03C31]' : 'text-[#8C877E]'}`} />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Tab Panels */}
@@ -444,76 +398,76 @@ export default function MovieDetailsPage({
 
         {activeTab === 'cast' && (
           <div className="space-y-6 animate-fade-in">
-              {/* Cast Grid */}
-              <div className="glass-card rounded-2xl p-6 border border-white/10 space-y-4">
-                {(() => {
-                  const matchedMock = MOCK_MOVIES.find(m => 
-                    m.id === movie.id || 
-                    String(m.tmdbId) === String(movie.tmdbId) || 
-                    (m.title && movie.title && m.title.toLowerCase() === movie.title.toLowerCase())
-                  );
-                  const displayCast = (movie.cast && movie.cast.length > 0)
-                    ? movie.cast
-                    : (matchedMock?.cast && matchedMock.cast.length > 0)
-                      ? matchedMock.cast
-                      : [
-                          { name: movie.director ? `${movie.director} Ensemble` : 'Lead Cast', character: 'Principal Cast' },
-                          { name: 'Featured Performers', character: 'Theatrical Ensemble' }
-                        ];
+            {/* Cast Grid */}
+            <div className="rounded-[4px] p-6 border border-[#262522] bg-[#121210] space-y-4">
+              {(() => {
+                const matchedMock = MOCK_MOVIES.find(m => 
+                  m.id === movie.id || 
+                  String(m.tmdbId) === String(movie.tmdbId) || 
+                  (m.title && movie.title && m.title.toLowerCase() === movie.title.toLowerCase())
+                );
+                const displayCast = (movie.cast && movie.cast.length > 0)
+                  ? movie.cast
+                  : (matchedMock?.cast && matchedMock.cast.length > 0)
+                    ? matchedMock.cast
+                    : [
+                        { name: movie.director ? `${movie.director} Ensemble` : 'Lead Cast', character: 'Principal Cast' },
+                        { name: 'Featured Performers', character: 'Theatrical Ensemble' }
+                      ];
 
-                  return (
-                    <>
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-bold text-white font-heading">Key Cast & Characters</h3>
-                        <span className="text-xs text-slate-400 font-medium">{displayCast.length} Actors Listed</span>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5">
-                        {displayCast.map((actor, idx) => (
-                          <div key={idx} className="p-4 rounded-xl bg-slate-900/60 border border-white/5 hover:border-amber-400/20 transition-all flex items-start gap-3">
-                            <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-xs shrink-0 mt-0.5">
-                              {actor.name ? actor.name.split(' ').map(n => n[0]).slice(0, 2).join('') : '🎭'}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <h4 className="text-sm font-bold text-white truncate">{actor.name}</h4>
-                              <p className="text-xs text-amber-400 font-medium truncate mt-0.5">as {actor.character}</p>
-                            </div>
+                return (
+                  <>
+                    <div className="flex items-center justify-between border-b border-[#262522] pb-3">
+                      <h3 className="text-lg font-serif text-[#F4F0EA]">Principal Cast & Characters</h3>
+                      <span className="font-mono text-[11px] text-[#8C877E]">{displayCast.length} ENSEMBLE ROLES</span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                      {displayCast.map((actor, idx) => (
+                        <div key={idx} className="p-3 rounded-[4px] bg-[#181816] border border-[#262522] hover:border-[#8C877E] transition-all flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-[2px] bg-[#262522] text-[#D9C39A] font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                            {actor.name ? actor.name.split(' ').map(n => n[0]).slice(0, 2).join('') : 'EN'}
                           </div>
-                        ))}
-                      </div>
-                    </>
-                  );
-                })()}
-              </div>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="text-xs font-medium text-[#F4F0EA] truncate">{actor.name}</h4>
+                            <p className="text-[11px] font-mono text-[#8C877E] truncate mt-0.5">as {actor.character}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
 
             {/* Director & Production Houses */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="glass-card rounded-2xl p-6 border border-white/10 space-y-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Direction & Vision</span>
-                <div className="flex items-start gap-3.5 p-4 rounded-xl bg-slate-900/60 border border-white/5">
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-xl shrink-0">
+              <div className="rounded-[4px] p-6 border border-[#262522] bg-[#121210] space-y-3">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#8C877E]">Direction & Vision</span>
+                <div className="flex items-start gap-3.5 p-4 rounded-[4px] bg-[#181816] border border-[#262522]">
+                  <div className="w-9 h-9 rounded-[2px] bg-[#262522] border border-[#262522] flex items-center justify-center text-lg shrink-0">
                     🎬
                   </div>
                   <div>
-                    <h4 className="text-base font-bold text-white">{movie.director || 'Director Unavailable'}</h4>
-                    <span className="inline-block text-[11px] font-semibold text-amber-400 mt-0.5">Director</span>
-                    <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">{movie.directorBio || 'Visionary auteur director.'}</p>
+                    <h4 className="text-sm font-serif text-[#F4F0EA]">{movie.director || 'Director Unavailable'}</h4>
+                    <span className="inline-block text-[10px] font-mono uppercase text-[#D9C39A] mt-0.5">Auteur / Director</span>
+                    <p className="text-xs text-[#8C877E] mt-1.5 leading-relaxed">{movie.directorBio || 'Visionary auteur director.'}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="glass-card rounded-2xl p-6 border border-white/10 space-y-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Production Companies</span>
+              <div className="rounded-[4px] p-6 border border-[#262522] bg-[#121210] space-y-3">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#8C877E]">Production Houses</span>
                 {movie.productionCompanies && movie.productionCompanies.length > 0 ? (
                   <div className="space-y-2">
                     {movie.productionCompanies.map((prod, idx) => (
-                      <div key={idx} className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-900/60 border border-white/5">
-                        <span className="text-xl">{prod.logo || '🎬'}</span>
-                        <span className="text-xs font-bold text-white">{prod.name}</span>
+                      <div key={idx} className="flex items-center gap-3 p-2.5 rounded-[4px] bg-[#181816] border border-[#262522]">
+                        <span className="text-base">{prod.logo || '📽️'}</span>
+                        <span className="text-xs font-mono text-[#F4F0EA]">{prod.name}</span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-slate-400">Independent Studio / Production Not Disclosed</p>
+                  <p className="text-xs font-mono text-[#8C877E]">Independent Studio / Production Ledger Undisclosed</p>
                 )}
               </div>
             </div>
@@ -521,15 +475,15 @@ export default function MovieDetailsPage({
         )}
       </div>
 
-      {/* "More Like This" Algorithmic Recommendations */}
+      {/* "More Like This" Recommendations */}
       {similarMovies.length > 0 && (
-        <div className="pt-8 space-y-4">
+        <div className="pt-8 space-y-4 border-t border-[#262522]">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold text-white font-heading flex items-center gap-2">
-              <Film className="w-5 h-5 text-amber-400" />
-              Related Cinema & Works
+            <h3 className="text-2xl font-serif text-[#F4F0EA] flex items-center gap-2">
+              <Film className="w-5 h-5 text-[#E03C31]" />
+              Related Cinema & Affinities
             </h3>
-            <span className="text-xs text-slate-400">Curated tonal & directorial affinities</span>
+            <span className="text-xs font-mono text-[#8C877E]">CURATED TONAL AFFINITIES</span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">

@@ -26,30 +26,33 @@ export default function WatchlistPage({
     : watchlist;
 
   return (
-    <div className="space-y-8 pb-20 animate-fade-in">
+    <div className="space-y-8 pb-20 animate-fade-in font-sans">
       
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#262522] pb-6">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-3xl font-extrabold text-white font-heading flex items-center gap-2.5">
-              <Bookmark className="w-8 h-8 text-amber-400 fill-amber-400" />
-              Your Watchlist ({watchlist.length})
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl sm:text-4xl font-serif text-[#F4F0EA] flex items-center gap-3">
+              <Bookmark className="w-7 h-7 text-[#E03C31] fill-[#E03C31]" />
+              Personal Archive & Watchlist
             </h1>
+            <span className="font-mono text-xs px-2 py-0.5 rounded-[2px] bg-[#181816] text-[#D9C39A] border border-[#262522] tabular-nums">
+              {watchlist.length} TITLES
+            </span>
             {user ? (
-              <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[2px] text-[10px] font-mono uppercase bg-[#181816] text-emerald-400 border border-emerald-500/20">
                 <Cloud className="w-3 h-3" /> Cloud Synced
               </span>
             ) : (
-              <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white/5 text-slate-400 border border-white/10">
-                Local Device Vault
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[2px] text-[10px] font-mono uppercase bg-[#181816] text-[#8C877E] border border-[#262522]">
+                Local Ledger
               </span>
             )}
           </div>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-[#8C877E] mt-1.5 font-sans">
             {user 
-              ? `Connected to ${user.email} — accessible across all your devices`
-              : 'Save films you admire. Sign in to sync your archive across devices.'}
+              ? `Ledger linked to ${user.email} — continuous cloud sync across exhibition terminals`
+              : 'Archived cinema collection. Authenticate to sync your ledger across archival terminals.'}
           </p>
         </div>
 
@@ -58,7 +61,7 @@ export default function WatchlistPage({
           {!user && (
             <button
               onClick={onOpenAuth}
-              className="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-black text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-2 rounded-[4px] bg-[#E03C31] hover:bg-[#c83228] text-white text-xs font-mono uppercase tracking-wider font-semibold transition-colors flex items-center gap-1.5 cursor-pointer shadow-md"
             >
               <LogIn className="w-3.5 h-3.5" />
               <span>Sign In to Sync</span>
@@ -68,14 +71,14 @@ export default function WatchlistPage({
           {watchlist.length > 0 && (
             <button
               onClick={() => setFilterStreamingOnly(!filterStreamingOnly)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-3.5 py-2 rounded-[4px] text-xs font-mono uppercase tracking-wider transition-colors flex items-center gap-1.5 cursor-pointer ${
                 filterStreamingOnly
-                  ? 'bg-amber-400 text-black shadow-md'
-                  : 'bg-[#121622] text-slate-300 hover:text-white border border-white/10'
+                  ? 'bg-[#181816] text-[#D9C39A] border border-[#D9C39A]/40'
+                  : 'bg-[#121210] hover:bg-[#181816] text-[#8C877E] hover:text-[#F4F0EA] border border-[#262522]'
               }`}
             >
               <Tv className="w-3.5 h-3.5" />
-              <span>Streaming Now ({currentCountry})</span>
+              <span>Streaming ({currentCountry})</span>
             </button>
           )}
         </div>
@@ -83,49 +86,49 @@ export default function WatchlistPage({
 
       {/* Cloud Account Callout Card */}
       {!user && (
-        <div className="rounded-2xl p-5 bg-[#121622] border border-amber-500/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="rounded-[4px] p-5 bg-[#121210] border border-[#262522] flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20 flex items-center justify-center flex-shrink-0">
-              <Sparkles className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-[2px] bg-[#181816] text-[#D9C39A] border border-[#262522] flex items-center justify-center flex-shrink-0">
+              <Sparkles className="w-4 h-4 text-[#E03C31]" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-white">Sync Watchlist Across Devices</h4>
-              <p className="text-xs text-slate-400">Sign in with email to save your personal film collection permanently in your Kinova account.</p>
+              <h4 className="text-sm font-serif text-[#F4F0EA]">Sync Your Film Archive Across Devices</h4>
+              <p className="text-xs text-[#8C877E]">Authenticate with your email to preserve your trade logs, custom ratings, and curated vault permanently.</p>
             </div>
           </div>
           <button
             onClick={onOpenAuth}
-            className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-colors whitespace-nowrap cursor-pointer"
+            className="px-4 py-2 rounded-[4px] bg-[#181816] hover:bg-[#20201d] text-[#F4F0EA] border border-[#262522] hover:border-[#8C877E] text-xs font-mono uppercase tracking-wider font-semibold transition-colors whitespace-nowrap cursor-pointer"
           >
-            Sign In / Sign Up
+            Authenticate Account
           </button>
         </div>
       )}
 
       {/* Loading State */}
       {isLoadingWatchlist && (
-        <div className="py-12 text-center text-slate-400 flex flex-col items-center justify-center gap-2">
-          <Loader2 className="w-8 h-8 text-amber-400 animate-spin" />
-          <span className="text-xs font-medium">Syncing with cloud library...</span>
+        <div className="py-12 text-center text-[#8C877E] flex flex-col items-center justify-center gap-2">
+          <Loader2 className="w-8 h-8 text-[#D9C39A] animate-spin" />
+          <span className="text-xs font-mono uppercase tracking-wider">Syncing with archival repository...</span>
         </div>
       )}
 
       {/* Empty State */}
       {!isLoadingWatchlist && watchlist.length === 0 && (
-        <div className="bg-[#121622] rounded-3xl p-12 text-center max-w-md mx-auto space-y-4 border border-white/10 shadow-2xl">
-          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto">
-            <Bookmark className="w-8 h-8" />
+        <div className="bg-[#121210] rounded-[4px] p-12 text-center max-w-md mx-auto space-y-4 border border-[#262522] shadow-2xl">
+          <div className="w-14 h-14 rounded-[2px] bg-[#181816] text-[#8C877E] border border-[#262522] flex items-center justify-center mx-auto">
+            <Bookmark className="w-6 h-6 text-[#E03C31]" />
           </div>
-          <h3 className="text-xl font-bold text-white font-heading">Your Watchlist is Empty</h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Explore our curated catalog or use Curator mode to discover and save movies to your personal library.
+          <h3 className="text-2xl font-serif text-[#F4F0EA]">Ledger Archive is Empty</h3>
+          <p className="text-xs text-[#8C877E] leading-relaxed">
+            Examine our historical box office index or consult the Curatorial Intelligence engine to log films to your personal archive.
           </p>
           <button
             onClick={onNavigateHome}
-            className="px-6 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-black text-xs font-bold transition-all shadow-md inline-flex items-center gap-2 cursor-pointer"
+            className="px-5 py-2.5 rounded-[4px] bg-[#E03C31] hover:bg-[#c83228] text-white text-xs font-mono uppercase tracking-wider font-semibold transition-colors inline-flex items-center gap-2 cursor-pointer shadow-md"
           >
-            <span>Explore Films</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>Explore Archive</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
       )}
@@ -146,17 +149,17 @@ export default function WatchlistPage({
             ))}
           </div>
         ) : (
-          <div className="bg-[#121622] rounded-3xl p-10 text-center max-w-md mx-auto space-y-3 border border-white/10 shadow-2xl">
-            <Tv className="w-8 h-8 text-amber-400 mx-auto" />
-            <h4 className="text-base font-bold text-white font-heading">No Saved Films Streaming in {currentCountry}</h4>
-            <p className="text-xs text-slate-400">
-              None of your watchlisted films are currently streaming on subscription services in this region. You can check digital rental or purchase options in film details.
+          <div className="bg-[#121210] rounded-[4px] p-10 text-center max-w-md mx-auto space-y-3 border border-[#262522] shadow-2xl">
+            <Tv className="w-8 h-8 text-[#D9C39A] mx-auto" />
+            <h4 className="text-xl font-serif text-[#F4F0EA]">No Archived Films Streaming in {currentCountry}</h4>
+            <p className="text-xs text-[#8C877E]">
+              None of your saved titles are currently distributed on flatrate subscription platforms in this territory. Check digital rental/purchase ledgers in film details.
             </p>
             <button
               onClick={() => setFilterStreamingOnly(false)}
-              className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-[4px] bg-[#181816] hover:bg-[#20201d] text-[#F4F0EA] border border-[#262522] text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer"
             >
-              Show All Saved Films
+              Display All Archived Titles
             </button>
           </div>
         )

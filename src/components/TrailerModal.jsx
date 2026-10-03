@@ -21,24 +21,24 @@ export default function TrailerModal({ isOpen, onClose, youtubeId, movieTitle })
   if (!isOpen || !youtubeId) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm animate-fade-in">
       <div 
-        className="relative w-full max-w-4xl bg-[#0b0f19] border border-white/10 rounded-3xl overflow-hidden shadow-2xl"
+        className="relative w-full max-w-4xl bg-[#121210] border border-[#262522] rounded-[4px] overflow-hidden shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 px-6 border-b border-white/10 bg-slate-900/60">
-          <div className="flex items-center gap-2">
-            <Film className="w-5 h-5 text-rose-500" />
-            <h3 className="text-sm font-bold text-white truncate">
-              {movieTitle} — Official Cinematic Trailer
+        <div className="flex items-center justify-between p-3.5 px-5 border-b border-[#262522] bg-[#0A0A09]">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-[#E03C31]" />
+            <h3 className="font-serif text-base font-normal text-[#F4F0EA] tracking-wide truncate">
+              {movieTitle} <span className="font-mono text-[11px] text-[#8C877E] uppercase ml-1">— Official 35mm Trailer</span>
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-colors"
+            className="p-1 rounded-[2px] bg-[#181816] hover:bg-[#262522] border border-[#262522] text-[#8C877E] hover:text-[#F4F0EA] transition-colors cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 

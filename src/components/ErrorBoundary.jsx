@@ -25,25 +25,25 @@ export default class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-[400px] flex items-center justify-center p-6">
-          <div className="max-w-md w-full bg-[#121622] border border-amber-500/20 rounded-2xl p-8 text-center space-y-5 shadow-2xl">
-            <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-              <AlertTriangle className="w-7 h-7" />
+        <div className="min-h-[400px] flex items-center justify-center p-6 font-sans">
+          <div className="max-w-md w-full bg-[#121210] border border-[#262522] rounded-[4px] p-8 text-center space-y-5 shadow-2xl">
+            <div className="w-12 h-12 mx-auto rounded-[2px] bg-[#181816] border border-[#262522] flex items-center justify-center text-[#E03C31]">
+              <AlertTriangle className="w-6 h-6" />
             </div>
             
             <div className="space-y-2">
-              <h3 className="text-xl font-bold text-white tracking-tight">
-                Unable to load movie preview
+              <h3 className="text-xl font-serif text-[#F4F0EA]">
+                Ledger Display Interrupted
               </h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                A temporary data parsing error occurred. The system has safely contained it.
+              <p className="text-xs font-mono text-[#8C877E] leading-relaxed">
+                An anomaly in media telemetry occurred. The archive terminal has contained it safely.
               </p>
             </div>
 
             <div className="flex items-center justify-center gap-3 pt-2">
               <button
                 onClick={this.handleReset}
-                className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer"
+                className="px-4 py-2 rounded-[4px] bg-[#181816] hover:bg-[#22221f] text-[#F4F0EA] border border-[#262522] text-xs font-mono uppercase tracking-wider flex items-center gap-2 transition-colors cursor-pointer"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>Retry</span>
@@ -56,10 +56,10 @@ export default class ErrorBoundary extends React.Component {
                     window.location.href = '/';
                   }
                 }}
-                className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold flex items-center gap-2 transition-all cursor-pointer"
+                className="px-4 py-2 rounded-[4px] bg-[#E03C31] hover:bg-[#c83228] text-white text-xs font-mono uppercase tracking-wider font-semibold flex items-center gap-2 transition-colors cursor-pointer shadow-md"
               >
                 <Home className="w-3.5 h-3.5" />
-                <span>Return to Gallery</span>
+                <span>Return to Film Vault</span>
               </button>
             </div>
           </div>

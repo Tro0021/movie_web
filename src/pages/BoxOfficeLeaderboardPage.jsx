@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { TrendingUp, Award, DollarSign, ArrowUpRight, ArrowDownRight, Filter } from 'lucide-react';
-import { formatCurrency } from '../services/financialUtils';
+import { TrendingUp, ArrowUpRight, ArrowDownRight, Filter } from 'lucide-react';
+import { formatCurrency, getVerdictBadgeClass } from '../services/financialUtils';
 import { useRegion } from '../context/RegionContext';
 
 export default function BoxOfficeLeaderboardPage({ movies, onSelectMovie }) {
@@ -32,15 +32,15 @@ export default function BoxOfficeLeaderboardPage({ movies, onSelectMovie }) {
   };
 
   return (
-    <div className="space-y-8 pb-20 animate-fade-in">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
+    <div className="space-y-8 pb-20 animate-fade-in font-sans">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#262522] pb-6">
         <div>
-          <h1 className="text-3xl font-extrabold text-white font-heading flex items-center gap-2.5">
-            <TrendingUp className="w-8 h-8 text-emerald-400" />
-            Global Box Office Leaderboard
+          <h1 className="text-3xl sm:text-4xl font-serif text-[#F4F0EA] flex items-center gap-3">
+            <TrendingUp className="w-7 h-7 text-[#E03C31]" />
+            Global Box Office Trade Ledger
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400">
-            Audited worldwide collections, distributor share splits, and algorithmic commercial verdicts
+          <p className="text-xs sm:text-sm text-[#8C877E] mt-1 font-sans">
+            Audited theatrical collections, production capital multiples, and commercial verdict stamps
           </p>
         </div>
 
@@ -50,66 +50,67 @@ export default function BoxOfficeLeaderboardPage({ movies, onSelectMovie }) {
             <button
               key={tier}
               onClick={() => setFilterTier(tier)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
+              className={`px-3 py-1.5 rounded-[4px] text-[11px] font-mono uppercase tracking-wider transition-colors whitespace-nowrap cursor-pointer ${
                 filterTier === tier
-                  ? 'bg-amber-400 text-black shadow-sm'
-                  : 'bg-[#121622] text-slate-400 hover:text-white border border-white/5'
+                  ? 'bg-[#181816] text-[#D9C39A] border border-[#D9C39A]/40'
+                  : 'bg-[#121210] hover:bg-[#181816] text-[#8C877E] hover:text-[#F4F0EA] border border-[#262522]'
               }`}
             >
-              {tier === 'ALL' ? 'All Verdicts' : tier.replace('-', ' ')}
+              {tier === 'ALL' ? 'All Ledger Tiers' : tier.replace('-', ' ')}
             </button>
           ))}
         </div>
       </div>
 
       {/* Leaderboard Table Container */}
-      <div className="bg-[#121622] rounded-2xl border border-white/[0.08] overflow-hidden shadow-2xl">
+      <div className="bg-[#121210] rounded-[4px] border border-[#262522] overflow-hidden shadow-2xl">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs sm:text-sm text-slate-200">
-            <thead className="bg-[#0e121c] text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-white/10">
+          <table className="w-full text-left text-xs sm:text-sm text-[#F4F0EA]">
+            <thead className="bg-[#181816] text-[10px] font-mono uppercase tracking-wider text-[#8C877E] border-b border-[#262522]">
               <tr>
-                <th className="py-4 px-4 sm:px-6">Rank & Film</th>
+                <th className="py-3.5 px-4 sm:px-6">Index & Film Title</th>
                 <th 
                   onClick={() => handleSort('worldwideGross')} 
-                  className="py-4 px-4 cursor-pointer hover:text-white"
+                  className="py-3.5 px-4 cursor-pointer hover:text-[#F4F0EA] transition-colors select-none"
                 >
                   Worldwide Gross {sortField === 'worldwideGross' && (sortAsc ? '↑' : '↓')}
                 </th>
                 <th 
                   onClick={() => handleSort('budget')} 
-                  className="py-4 px-4 cursor-pointer hover:text-white"
+                  className="py-3.5 px-4 cursor-pointer hover:text-[#F4F0EA] transition-colors select-none"
                 >
                   Budget {sortField === 'budget' && (sortAsc ? '↑' : '↓')}
                 </th>
                 <th 
                   onClick={() => handleSort('domesticNet')} 
-                  className="py-4 px-4 cursor-pointer hover:text-white"
+                  className="py-3.5 px-4 cursor-pointer hover:text-[#F4F0EA] transition-colors select-none"
                 >
                   Domestic Net {sortField === 'domesticNet' && (sortAsc ? '↑' : '↓')}
                 </th>
                 <th 
                   onClick={() => handleSort('multiplier')} 
-                  className="py-4 px-4 cursor-pointer hover:text-white"
+                  className="py-3.5 px-4 cursor-pointer hover:text-[#F4F0EA] transition-colors select-none"
                 >
                   Multiple {sortField === 'multiplier' && (sortAsc ? '↑' : '↓')}
                 </th>
-                <th className="py-4 px-4">Verdict Status</th>
+                <th className="py-3.5 px-4">Verdict Stamp</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-[#262522]">
               {filtered.map((movie, index) => {
                 const bVal = Number(movie.financials?.budget) || 0;
                 const gVal = Number(movie.financials?.worldwideGross) || 0;
                 const multiplier = (bVal > 0 && gVal > 0) ? (gVal / bVal).toFixed(2) : null;
+                const verdictTier = movie.financials?.verdictTier || 'average';
                 return (
                   <tr 
                     key={movie.id}
                     onClick={() => onSelectMovie(movie)}
-                    className="hover:bg-white/5 cursor-pointer transition-colors group"
+                    className="hover:bg-[#181816] cursor-pointer transition-colors group"
                   >
-                    <td className="py-4 px-4 sm:px-6 flex items-center gap-3">
-                      <span className="w-6 font-extrabold text-slate-500 group-hover:text-amber-400 font-heading">
-                        #{index + 1}
+                    <td className="py-3 px-4 sm:px-6 flex items-center gap-3">
+                      <span className="w-6 font-mono text-xs text-[#8C877E] group-hover:text-[#D9C39A]">
+                        #{String(index + 1).padStart(2, '0')}
                       </span>
                       <img 
                         src={movie.posterUrl} 
@@ -118,19 +119,19 @@ export default function BoxOfficeLeaderboardPage({ movies, onSelectMovie }) {
                           e.target.onerror = null;
                           e.target.src = "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=100&q=80";
                         }}
-                        className="w-10 h-14 object-cover rounded-lg shadow flex-shrink-0"
+                        className="w-8 h-12 object-cover rounded-[2px] border border-white/10 flex-shrink-0"
                       />
-                      <div>
-                        <span className="font-bold text-white group-hover:text-amber-300 transition-colors block">
+                      <div className="min-w-0">
+                        <span className="font-serif text-sm text-[#F4F0EA] group-hover:text-[#D9C39A] transition-colors block truncate">
                           {movie.title}
                         </span>
-                        <span className="text-[11px] text-slate-400">
-                          {movie.releaseDate?.slice(0, 4) || 'N/A'} • {movie.director || 'Director Unavailable'}
+                        <span className="text-[11px] font-mono text-[#8C877E] block">
+                          {movie.releaseDate?.slice(0, 4) || 'N/A'} · {movie.director || 'Director Unavailable'}
                         </span>
                       </div>
                     </td>
 
-                    <td className="py-4 px-4 font-mono font-bold text-emerald-400 text-sm">
+                    <td className="py-3 px-4 font-mono font-semibold tabular-nums text-[#D9C39A] text-xs">
                       {formatCurrency(
                         movie.financials?.worldwideGross || movie.financials?.worldwideGrossRaw, 
                         selectedRegion, 
@@ -138,7 +139,7 @@ export default function BoxOfficeLeaderboardPage({ movies, onSelectMovie }) {
                       )}
                     </td>
 
-                    <td className="py-4 px-4 font-mono text-slate-300">
+                    <td className="py-3 px-4 font-mono tabular-nums text-[#8C877E] text-xs">
                       {formatCurrency(
                         movie.financials?.budget || movie.financials?.budgetRaw, 
                         selectedRegion, 
@@ -146,21 +147,21 @@ export default function BoxOfficeLeaderboardPage({ movies, onSelectMovie }) {
                       )}
                     </td>
 
-                    <td className="py-4 px-4 font-mono text-slate-300">
+                    <td className="py-3 px-4 font-mono tabular-nums text-[#8C877E] text-xs">
                       {formatCurrency(
                         movie.financials?.domesticNet || movie.financials?.domesticNetRaw, 
                         selectedRegion
                       )}
                     </td>
 
-                    <td className="py-4 px-4">
-                      <span className="font-mono font-bold text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20 text-xs">
+                    <td className="py-3 px-4">
+                      <span className="font-mono tabular-nums text-[#F4F0EA] bg-[#181816] px-1.5 py-0.5 rounded-[2px] border border-[#262522] text-[11px]">
                         {multiplier ? `${multiplier}x` : 'N/A'}
                       </span>
                     </td>
 
-                    <td className="py-4 px-4">
-                      <span className="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                    <td className="py-3 px-4">
+                      <span className={`px-2 py-0.5 rounded-[2px] font-mono text-[10px] uppercase tracking-wider ${getVerdictBadgeClass(verdictTier)}`}>
                         {movie.financials?.verdict || 'Undisclosed'}
                       </span>
                     </td>
