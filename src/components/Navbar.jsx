@@ -69,7 +69,6 @@ export default function Navbar({
   const activeCountryObj = COUNTRY_OPTIONS.find(c => c.code === currentCountry) || COUNTRY_OPTIONS[0];
 
   return (
-  return (
     <header className="sticky top-0 z-40 w-full bg-[#0A0A09]/95 backdrop-blur-md border-b border-[#262522] transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20 gap-4">

@@ -177,3 +177,23 @@ export function calculateIndustryTheatricalSplits({
     multiplier: budget > 0 ? Number((actualWorldwide / budget).toFixed(2)) : 0
   };
 }
+
+export function getVerdictBadgeClass(tier) {
+  switch (tier?.toLowerCase()) {
+    case 'blockbuster':
+      return 'bg-[#181816] text-[#D9C39A] border border-[#D9C39A]/40 rounded-[2px] font-mono';
+    case 'super-hit':
+      return 'bg-[#181816] text-[#D9C39A] border border-[#D9C39A]/30 rounded-[2px] font-mono';
+    case 'hit':
+      return 'bg-[#181816] text-[#F4F0EA] border border-[#262522] rounded-[2px] font-mono';
+    case 'average':
+      return 'bg-[#181816] text-[#8C877E] border border-[#262522] rounded-[2px] font-mono';
+    case 'flop':
+      return 'bg-[#181816] text-[#E03C31] border border-[#E03C31]/30 rounded-[2px] font-mono';
+    case 'disaster':
+      return 'bg-[#181816] text-[#E03C31] border border-[#E03C31]/50 rounded-[2px] font-mono';
+    default:
+      return 'bg-[#181816] text-[#8C877E] border border-[#262522] rounded-[2px] font-mono';
+  }
+}
+
