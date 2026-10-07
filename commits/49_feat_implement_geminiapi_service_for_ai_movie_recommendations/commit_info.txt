@@ -1,0 +1,5 @@
+Changed Files:
+- src/services/geminiApi.js
+
+Change Summary:
+Implemented geminiApi service connecting to Gemini 3.1 Flash-Lite with structured JSON prompts and algorithmic cinephile fallbacks.

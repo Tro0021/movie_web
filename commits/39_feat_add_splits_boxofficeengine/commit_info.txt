@@ -1,0 +1,5 @@
+Changed Files:
+- src/services/boxOfficeEngine.js
+
+Change Summary:
+Added distributor rental share and exhibitor cut split logic to boxOfficeEngine.

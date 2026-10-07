@@ -1,0 +1,10 @@
+Changed Files:
+- package.json
+- src/App.jsx
+- src/components/Navbar.jsx
+- src/context/RegionContext.jsx
+- vercel.json
+- vite.config.js
+
+Change Summary:
+Finalized Vercel deployment configuration, dev server scraping middleware in vite.config.js, regional auto-detection in RegionContext, search card metadata in Navbar, and optimized App.jsx with route-level code splitting (`lazy`/`Suspense`).

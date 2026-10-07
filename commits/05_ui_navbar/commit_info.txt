@@ -1,0 +1,6 @@
+Changed Files:
+- src/components/Navbar.jsx
+- src/App.jsx
+
+Change Summary:
+Built the responsive top navigation bar component with brand logo, search input, and region selector, mounting it in App.jsx.

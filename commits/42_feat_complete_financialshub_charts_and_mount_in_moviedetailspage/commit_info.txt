@@ -1,0 +1,7 @@
+Changed Files:
+- package.json
+- src/components/FinancialsHub.jsx
+- src/pages/MovieDetailsPage.jsx
+
+Change Summary:
+Completed FinancialsHub with regional split charts and celebration effects, mounting it as the primary financial ledger tab in MovieDetailsPage.

@@ -1,0 +1,6 @@
+Changed Files:
+- src/pages/MovieDetailsPage.jsx
+- src/App.jsx
+
+Change Summary:
+Completed MovieDetailsPage with cast grids, director biographies, related movie recommendations, and wired routing in App.jsx.

@@ -1,0 +1,5 @@
+Changed Files:
+- src/pages/AiDiscoveryPage.jsx
+
+Change Summary:
+Built the initial UI for AiDiscoveryPage including anchor cinema selectors, directorial cadence options, and mood preset prompt chips.

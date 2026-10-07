@@ -1,0 +1,6 @@
+Changed Files:
+- src/lib/supabaseClient.js
+- src/services/watchlistService.js
+
+Change Summary:
+Implemented complete Supabase watchlist CRUD operations with data normalization in watchlistService, re-exporting helpers via supabaseClient.

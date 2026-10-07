@@ -1,0 +1,5 @@
+Changed Files:
+- src/components/StreamingTicketing.jsx
+
+Change Summary:
+Built StreamingTicketing component displaying regional theatrical booking links and OTT subscription exhibition windows.

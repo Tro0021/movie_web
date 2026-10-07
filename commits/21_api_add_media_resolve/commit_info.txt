@@ -1,0 +1,6 @@
+Changed Files:
+- api/media/resolve.js
+- vercel.json
+
+Change Summary:
+Created the media resolution serverless route to fetch high-resolution poster and backdrop artwork dynamically.

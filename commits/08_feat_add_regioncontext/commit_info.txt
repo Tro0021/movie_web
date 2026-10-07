@@ -1,0 +1,6 @@
+Changed Files:
+- src/context/RegionContext.jsx
+- src/main.jsx
+
+Change Summary:
+Created RegionContext to globally manage and persist selected regional territory settings across the application.

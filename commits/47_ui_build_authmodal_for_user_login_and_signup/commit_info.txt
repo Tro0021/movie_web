@@ -1,0 +1,5 @@
+Changed Files:
+- src/components/AuthModal.jsx
+
+Change Summary:
+Built the AuthModal component supporting email authentication, registration, sign-out, session auditing, and keyboard accessibility.

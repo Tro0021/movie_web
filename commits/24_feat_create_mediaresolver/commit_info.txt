@@ -1,0 +1,7 @@
+Changed Files:
+- src/services/mediaResolver.js
+- src/components/MovieCard.jsx
+- src/pages/HomePage.jsx
+
+Change Summary:
+Created client-side mediaResolver service with intelligent image caching and wired fallback handling into MovieCard and HomePage.

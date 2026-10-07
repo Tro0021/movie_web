@@ -1,0 +1,5 @@
+Changed Files:
+- src/data/mockMovies.js
+
+Change Summary:
+Added the initial mock movie dataset with preliminary film metadata, poster paths, and release details.

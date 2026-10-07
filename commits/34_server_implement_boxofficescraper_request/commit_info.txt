@@ -1,0 +1,6 @@
+Changed Files:
+- server/boxOfficeScraper.js
+- package.json
+
+Change Summary:
+Implemented Box Office Mojo scraping logic in boxOfficeScraper.js using Cheerio and Axios to extract gross revenues and budgets.

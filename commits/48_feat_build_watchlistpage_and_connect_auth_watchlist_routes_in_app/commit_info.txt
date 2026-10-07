@@ -1,0 +1,6 @@
+Changed Files:
+- src/pages/WatchlistPage.jsx
+- src/App.jsx
+
+Change Summary:
+Built WatchlistPage with local and cloud sync indicators, connecting Supabase auth listeners and the `/watchlist` route in App.jsx.

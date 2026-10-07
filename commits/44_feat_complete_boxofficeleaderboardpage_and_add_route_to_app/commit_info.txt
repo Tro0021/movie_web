@@ -1,0 +1,6 @@
+Changed Files:
+- src/pages/BoxOfficeLeaderboardPage.jsx
+- src/App.jsx
+
+Change Summary:
+Completed BoxOfficeLeaderboardPage with commercial verdict badges and tier filters, mounting the `/boxoffice` route in App.jsx.

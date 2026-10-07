@@ -1,0 +1,5 @@
+Changed Files:
+- src/pages/MovieDetailsPage.jsx
+
+Change Summary:
+Scaffolded the MovieDetailsPage layout including cinematic hero backdrop, film metadata ledger, and action buttons.

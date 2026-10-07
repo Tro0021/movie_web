@@ -1,0 +1,10 @@
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "functions": {
+    "api/movies.js": { "maxDuration": 5 },
+    "api/health.js": { "maxDuration": 5 }
+  }
+}

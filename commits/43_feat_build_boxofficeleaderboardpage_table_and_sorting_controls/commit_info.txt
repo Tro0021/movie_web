@@ -1,0 +1,5 @@
+Changed Files:
+- src/pages/BoxOfficeLeaderboardPage.jsx
+
+Change Summary:
+Built the BoxOfficeLeaderboardPage table layout with sort controls for worldwide gross, production budget, and domestic net revenues.

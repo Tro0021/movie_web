@@ -1,0 +1,5 @@
+Changed Files:
+- src/pages/HomePage.jsx
+
+Change Summary:
+Scaffolded HomePage featuring the cinematic hero spotlight showcase and initial catalog sections.

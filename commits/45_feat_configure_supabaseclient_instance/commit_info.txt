@@ -1,0 +1,6 @@
+Changed Files:
+- package.json
+- src/lib/supabaseClient.js
+
+Change Summary:
+Added `@supabase/supabase-js` dependency and configured the persistent `supabaseClient` instance with URL normalization.

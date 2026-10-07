@@ -1,0 +1,6 @@
+Changed Files:
+- src/components/OnboardingModal.jsx
+- src/App.jsx
+
+Change Summary:
+Built OnboardingModal for calibrating user cinema taste profiles with visual genre cards, connecting preference state into App.jsx.

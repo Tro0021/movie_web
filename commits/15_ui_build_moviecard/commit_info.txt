@@ -1,0 +1,5 @@
+Changed Files:
+- src/components/MovieCard.jsx
+
+Change Summary:
+Built the MovieCard component to render movie posters, badges, release years, and interactive action triggers.

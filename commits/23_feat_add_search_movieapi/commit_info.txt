@@ -1,0 +1,6 @@
+Changed Files:
+- src/components/Navbar.jsx
+- src/services/movieApi.js
+
+Change Summary:
+Added real-time movie search capabilities to movieApi and wired live dropdown results into Navbar.

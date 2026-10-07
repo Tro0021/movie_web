@@ -1,0 +1,7 @@
+Changed Files:
+- api/health.js
+- api/movies.js
+- vercel.json
+
+Change Summary:
+Added serverless API endpoints for microservice health checking and movie catalog retrieval with Vercel function routing.

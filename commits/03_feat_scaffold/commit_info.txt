@@ -1,0 +1,7 @@
+Changed Files:
+- index.html
+- src/App.jsx
+- src/main.jsx
+
+Change Summary:
+Scaffolded the root HTML entry point, mounted React via main.jsx, and initialized the initial App component shell.

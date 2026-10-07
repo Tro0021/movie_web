@@ -1,0 +1,6 @@
+Changed Files:
+- src/pages/HomePage.jsx
+- src/App.jsx
+
+Change Summary:
+Completed HomePage with genre filtering chips, regional spotlight carousels, and connected selection handlers in App.jsx.

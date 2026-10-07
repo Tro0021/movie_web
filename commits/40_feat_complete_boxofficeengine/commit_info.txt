@@ -1,0 +1,6 @@
+Changed Files:
+- server/index.js
+- src/services/boxOfficeEngine.js
+
+Change Summary:
+Completed boxOfficeEngine scraper pipelines and integrated memory caching into the Express server.

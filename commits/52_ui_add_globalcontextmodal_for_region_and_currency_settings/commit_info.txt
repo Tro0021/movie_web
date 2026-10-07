@@ -1,0 +1,6 @@
+Changed Files:
+- src/components/GlobalContextModal.jsx
+- src/pages/MovieDetailsPage.jsx
+
+Change Summary:
+Added GlobalContextModal displaying territorial certifications, distributors, and localization data, mounting it in MovieDetailsPage.

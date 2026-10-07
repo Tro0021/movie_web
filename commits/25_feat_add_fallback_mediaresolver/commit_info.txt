@@ -1,0 +1,5 @@
+Changed Files:
+- src/services/mediaResolver.js
+
+Change Summary:
+Enhanced mediaResolver with resilient backdrop fallbacks and external artwork resolution heuristics.

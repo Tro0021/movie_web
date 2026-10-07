@@ -1,0 +1,6 @@
+Changed Files:
+- src/components/TrailerModal.jsx
+- src/App.jsx
+
+Change Summary:
+Built TrailerModal component for embedding full-screen YouTube trailers and integrated modal playback state into App.jsx.

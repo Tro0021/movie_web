@@ -1,0 +1,5 @@
+Changed Files:
+- src/components/FinancialsHub.jsx
+
+Change Summary:
+Built initial FinancialsHub component featuring box office verdict banners, ROI calculations, and core revenue breakdown cards.

@@ -1,0 +1,5 @@
+Changed Files:
+- src/services/boxOfficeEngine.js
+
+Change Summary:
+Structured boxOfficeEngine data models and caching pipelines for server-side box office intelligence.

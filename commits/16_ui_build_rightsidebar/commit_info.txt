@@ -1,0 +1,6 @@
+Changed Files:
+- src/components/RightSidebar.jsx
+- src/App.jsx
+
+Change Summary:
+Built the collapsible RightSidebar drawer navigation component for quick access to ledger sections and regional preferences.

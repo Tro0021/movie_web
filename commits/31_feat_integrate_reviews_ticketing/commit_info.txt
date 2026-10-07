@@ -1,0 +1,5 @@
+Changed Files:
+- src/pages/MovieDetailsPage.jsx
+
+Change Summary:
+Integrated ReviewAggregator and StreamingTicketing components into the tab navigation panels of MovieDetailsPage.

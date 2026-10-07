@@ -1,0 +1,7 @@
+Changed Files:
+- src/components/ErrorBoundary.jsx
+- src/App.jsx
+- src/main.jsx
+
+Change Summary:
+Implemented a React ErrorBoundary component with a fallback recovery UI to catch and handle runtime rendering errors.

@@ -1,0 +1,6 @@
+Changed Files:
+- server/boxOfficeScraper.js
+- server/index.js
+
+Change Summary:
+Added normalization helpers, scraping retry strategies, and mounted `/api/box-office` in the Express server.

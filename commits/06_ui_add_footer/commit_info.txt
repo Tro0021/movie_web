@@ -1,0 +1,6 @@
+Changed Files:
+- src/components/Footer.jsx
+- src/App.jsx
+
+Change Summary:
+Built the application footer component displaying brand credits and AI discovery links, mounting it in App.jsx.

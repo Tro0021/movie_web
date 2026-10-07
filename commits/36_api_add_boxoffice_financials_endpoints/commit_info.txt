@@ -1,0 +1,6 @@
+Changed Files:
+- api/box-office.js
+- api/financials/[imdbId].js
+
+Change Summary:
+Added serverless routes for box office financial summary queries and detailed IMDb-keyed financial records.

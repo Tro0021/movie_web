@@ -1,0 +1,5 @@
+Changed Files:
+- src/services/financialUtils.js
+
+Change Summary:
+Consolidated browser-safe financial calculations, currency formatters, and commercial verdict classification helpers.

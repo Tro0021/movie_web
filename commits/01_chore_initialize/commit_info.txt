@@ -1,0 +1,12 @@
+Changed Files:
+- .env.example
+- .gitignore
+- .oxlintrc.json
+- package.json
+- public/favicon.svg
+- README.md
+- vercel.json
+- vite.config.js
+
+Change Summary:
+Initialized the Vite project workspace with base project configurations, package manifests, build scripts, and linter settings.

@@ -1,0 +1,6 @@
+Changed Files:
+- server/index.js
+- package.json
+
+Change Summary:
+Configured Express standalone server with CORS and JSON middleware to host local backend scrapers and API routes.

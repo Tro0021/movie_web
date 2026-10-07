@@ -1,0 +1,6 @@
+Changed Files:
+- src/utils/currencyFormatter.js
+- src/context/RegionContext.jsx
+
+Change Summary:
+Created regional currency formatting utilities and exchange rate definitions, integrating them into the region provider.

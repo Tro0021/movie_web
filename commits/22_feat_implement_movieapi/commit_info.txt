@@ -1,0 +1,6 @@
+Changed Files:
+- src/services/financialUtils.js
+- src/services/movieApi.js
+
+Change Summary:
+Implemented movieApi service client functions for fetching catalog listings and browser-safe financial utility calculations.

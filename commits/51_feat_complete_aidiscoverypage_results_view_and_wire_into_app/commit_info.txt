@@ -1,0 +1,6 @@
+Changed Files:
+- src/pages/AiDiscoveryPage.jsx
+- src/App.jsx
+
+Change Summary:
+Completed AiDiscoveryPage with recommendation card outputs and OTT exhibition links, mounting the `/discovery` route in App.jsx.

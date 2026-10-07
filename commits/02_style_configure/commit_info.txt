@@ -1,0 +1,7 @@
+Changed Files:
+- postcss.config.js
+- src/index.css
+- tailwind.config.js
+
+Change Summary:
+Configured Tailwind CSS, PostCSS, and defined custom design tokens, fonts, and dark theme color palettes in index.css.

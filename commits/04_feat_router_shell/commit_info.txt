@@ -1,0 +1,5 @@
+Changed Files:
+- src/App.jsx
+
+Change Summary:
+Implemented client-side tab navigation state and URL routing resolution helpers inside the App component shell.

@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "functions": {
+    "api/imdb/[imdbId].js": { "maxDuration": 10 },
+    "api/media/resolve.js": { "maxDuration": 10 },
+    "api/movies.js": { "maxDuration": 5 },
+    "api/health.js": { "maxDuration": 5 }
+  }
+}

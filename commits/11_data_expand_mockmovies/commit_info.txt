@@ -1,0 +1,5 @@
+Changed Files:
+- src/data/mockMovies.js
+
+Change Summary:
+Expanded the mock movie catalog with additional titles, cast lists, and expanded financial estimates.

@@ -1,0 +1,8 @@
+Changed Files:
+- api/imdb/[imdbId].js
+- src/services/boxOfficeEngine.js
+- package.json
+- vercel.json
+
+Change Summary:
+Added dynamic IMDb ID lookup serverless endpoint and initialized backend box office scraping structures.
